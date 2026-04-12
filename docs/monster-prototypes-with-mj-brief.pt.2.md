@@ -15,7 +15,6 @@ level: 7
 attack: 2200
 defense: 1800
 health: 2500
-agility: 4
 mana_cost: 6
 primary_color: '#3B5C3A'
 secondary_color: '#A3BFA3'

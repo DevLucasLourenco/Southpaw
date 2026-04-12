@@ -23,11 +23,10 @@ type BattlefieldSectionProps = {
   viewerRole: 'player' | 'spectator';
   viewerSeat: 'player_one' | 'player_two' | null;
   activeSeat: 'player_one' | 'player_two' | null;
-  onAttackTarget: (card: RuntimeBattleCard) => void;
-  onAbilityTarget: (card: RuntimeBattleCard) => void;
   onSelectAttack?: (cardId: string) => void;
   onSelectAbility?: (card: RuntimeBattleCard) => void;
   onChangePosition?: (card: RuntimeBattleCard) => void;
+  pulsingActionKey?: string | null;
   onPracticeRemoveEnemyCard?: (card: RuntimeBattleCard) => void;
   isDropEnabled?: boolean;
   activeDropSlot?: number | null;
@@ -61,11 +60,10 @@ export function BattlefieldSection({
   viewerRole,
   viewerSeat,
   activeSeat,
-  onAttackTarget,
-  onAbilityTarget,
   onSelectAttack,
   onSelectAbility,
   onChangePosition,
+  pulsingActionKey = null,
   onPracticeRemoveEnemyCard,
   isDropEnabled = false,
   activeDropSlot = null,
@@ -161,22 +159,16 @@ export function BattlefieldSection({
                     isSummoning={Boolean(card && summoningCardId === card.instance_id)}
                     isDestroyed={isGhost}
                     isDamaged={Boolean(card && damagedCardIds.has(card.instance_id))}
-                    onClick={
-                      card
-                        ? () => {
-                            if (selectedAttacker) {
-                              onAttackTarget(card);
-                            } else if (selectedAbilityCard) {
-                              onAbilityTarget(card);
-                            }
-                          }
-                        : undefined
-                    }
                   />
 
                   {canShowControls && card ? (
                     <div className="battlefield__interaction-bar">
                       <button
+                        className={[
+                          'battlefield__action-button',
+                          selectedAttackerId === card.instance_id ? 'battlefield__action-button--selected' : '',
+                          pulsingActionKey === `${card.instance_id}:attack` ? 'battlefield__action-button--pulsing' : '',
+                        ].join(' ')}
                         disabled={!card.can_attack || card.position !== 'attack'}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -187,13 +179,18 @@ export function BattlefieldSection({
                         <Sword size={13} />
                       </button>
                       <button
+                        className={[
+                          'battlefield__action-button',
+                          'battlefield__ability-btn',
+                          selectedAbilityCardId === card.instance_id ? 'battlefield__action-button--selected' : '',
+                          pulsingActionKey === `${card.instance_id}:ability` ? 'battlefield__action-button--pulsing' : '',
+                        ].join(' ')}
                         disabled={!card.can_use_ability}
                         onClick={(event) => {
                           event.stopPropagation();
                           onSelectAbility?.(card);
                         }}
                         title={`${card.ability_name} — custo ${card.ability_elixir_cost}`}
-                        className="battlefield__ability-btn"
                       >
                         <span className="battlefield__ability-btn-name">{card.ability_name}</span>
                         <span className="battlefield__ability-btn-cost">
@@ -201,6 +198,10 @@ export function BattlefieldSection({
                         </span>
                       </button>
                       <button
+                        className={[
+                          'battlefield__action-button',
+                          pulsingActionKey === `${card.instance_id}:position` ? 'battlefield__action-button--pulsing' : '',
+                        ].join(' ')}
                         disabled={!card.can_change_position}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -217,6 +218,7 @@ export function BattlefieldSection({
                   {card && onPracticeRemoveEnemyCard && viewerRole === 'player' ? (
                     <div className="battlefield__interaction-bar battlefield__interaction-bar--single">
                       <button
+                        className="battlefield__action-button"
                         onClick={(event) => {
                           event.stopPropagation();
                           onPracticeRemoveEnemyCard(card);

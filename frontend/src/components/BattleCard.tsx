@@ -32,7 +32,6 @@ export type BattleCardVisual = {
 
 type BattleCardProps = {
   card: BattleCardVisual;
-  variant?: 'field' | 'reserve' | 'hand';
   isSelectable?: boolean;
   isSelected?: boolean;
   isActionSource?: boolean;
@@ -48,7 +47,6 @@ type BattleCardProps = {
 
 export function BattleCard({
   card,
-  variant = 'field',
   isSelectable = false,
   isSelected = false,
   isActionSource = false,
@@ -68,22 +66,15 @@ export function BattleCard({
     '--card-secondary': card.is_token ? '#d8d2c2' : card.secondary_color,
   } as CSSProperties;
 
-  const healthValue =
-    variant === 'field'
-      ? (card.current_health ?? card.health ?? 0)
-      : (card.health ?? card.max_health ?? 0);
-  const healthCap =
-    variant === 'field'
-      ? (card.max_health ?? card.health ?? 0)
-      : (card.health ?? card.max_health ?? 0);
+  const healthValue = card.current_health ?? card.health ?? 0;
+  const healthCap = card.max_health ?? card.health ?? 0;
   const imageSource = `http://localhost:8000${card.image_path}`;
 
   return (
     <article
       className={[
         'battle-card',
-        variant === 'reserve' ? 'battle-card--reserve' : '',
-        variant === 'hand' ? 'battle-card--hand' : '',
+        // não há mais variantes
         isSelectable ? 'battle-card--selectable' : '',
         isSelected ? 'battle-card--selected' : '',
         isActionSource ? 'battle-card--action-source' : '',
@@ -133,9 +124,7 @@ export function BattleCard({
           <div className="battle-card__side-stat">
             <span>HP</span>
             <strong>
-              {variant === 'field'
-                ? `${healthValue}/\n${healthCap}`
-                : `${healthCap}/\n${healthCap}`}
+              `${healthValue}/\n${healthCap}`
             </strong>
           </div>
           <div className="battle-card__side-stat battle-card__side-stat--divider">

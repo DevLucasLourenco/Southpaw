@@ -15,6 +15,18 @@ type BattleArenaProps = {
 };
 
 type BattleRoomMode = "pvp" | "practice_bot";
+type TargetModalKind = "attack" | "ability";
+type TargetModalState = {
+  kind: TargetModalKind;
+  sourceCardId: string;
+  sourceCardName: string;
+  title: string;
+  description: string;
+  cards: RuntimeBattleCard[];
+  minTargets: number;
+  maxTargets: number;
+  allowPlayerTarget?: boolean;
+};
 
 type DestroyedGhostMap = Record<string, RuntimeBattleCard>;
 const DEFAULT_SLOT_COUNT = 5;
@@ -30,6 +42,26 @@ function buildSlots(cards: RuntimeBattleCard[], slotCount: number) {
 
 function buildFacedownCards(count: number) {
   return Array.from({ length: Math.min(count, 7) }, (_, index) => index);
+}
+
+function resolveCardTargetPool(
+  targetMode: string,
+  allies: RuntimeBattleCard[],
+  enemies: RuntimeBattleCard[],
+) {
+  switch (targetMode) {
+    case "card":
+      return enemies;
+    case "ally_card":
+      return allies;
+    case "two_cards":
+    case "up_to_two_cards":
+      return [...allies, ...enemies];
+    case "card_or_player":
+      return enemies;
+    default:
+      return [];
+  }
 }
 
 function inferMatchEndReason(roomState: BattleRoomState) {
@@ -106,10 +138,13 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   const [practiceSelectedSlug, setPracticeSelectedSlug] = useState<string | null>(null);
   const [practiceTargetSlotIndex, setPracticeTargetSlotIndex] = useState<number | null>(null);
   const [practiceModalOpen, setPracticeModalOpen] = useState(false);
+  const [targetModal, setTargetModal] = useState<TargetModalState | null>(null);
+  const [pulsingActionKey, setPulsingActionKey] = useState<string | null>(null);
   const prevStateRef = useRef<BattleRoomState | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
   const retryCountRef = useRef(0);
+  const actionPulseTimeoutRef = useRef<number | null>(null);
   const monstersQuery = useMonstersQuery();
 
   useEffect(() => {
@@ -182,6 +217,14 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
       socketRef.current = null;
     };
   }, [roomId, displayName, preferredRole]);
+
+  useEffect(() => {
+    return () => {
+      if (actionPulseTimeoutRef.current) {
+        window.clearTimeout(actionPulseTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const viewerSeat = roomState?.viewer.seat ?? null;
   const viewerRole = roomState?.viewer.role ?? preferredRole;
@@ -290,9 +333,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   }, [bottomPlayer?.battlefield, fieldSize, roomState, topPlayer?.battlefield, viewerSeat]);
 
   useEffect(() => {
-    setSelectedAttackerId(null);
-    setSelectedAbilityCardId(null);
-    setSelectedAbilityTargetIds([]);
+    closeTargetModal();
     setDraggedHandSlug(null);
     setActiveDropSlot(null);
     if (roomState?.last_action?.kind === "summon" || roomState?.last_action?.kind === "turn_start") {
@@ -372,72 +413,156 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
     });
   }
 
-  function handleAttackTarget(card: RuntimeBattleCard) {
-    if (!selectedAttacker) {
-      return;
+  function pulseAction(actionKey: string) {
+    setPulsingActionKey(actionKey);
+    if (actionPulseTimeoutRef.current) {
+      window.clearTimeout(actionPulseTimeoutRef.current);
     }
-    if (roomState && card.cannot_be_attack_target_until_turn >= roomState.turn_number) {
-      setErrorMessage("Esta carta esta protegida contra ataques neste momento.");
-      return;
-    }
-    sendAction({
-      type: "attack",
-      attacker_id: selectedAttacker.instance_id,
-      target_type: "card",
-      target_id: card.instance_id,
-    });
+    actionPulseTimeoutRef.current = window.setTimeout(() => {
+      setPulsingActionKey((current) => (current === actionKey ? null : current));
+    }, 950);
   }
 
-  function handleAbilityTarget(card: RuntimeBattleCard) {
-    if (!selectedAbilityCard) {
-      return;
-    }
-    const targetMode = selectedAbilityCard.ability_target_mode;
-
-    if (targetMode === "two_cards" || targetMode === "up_to_two_cards") {
-      const nextTargets = selectedAbilityTargetIds.includes(card.instance_id)
-        ? selectedAbilityTargetIds.filter((targetId) => targetId !== card.instance_id)
-        : [...selectedAbilityTargetIds, card.instance_id].slice(0, 2);
-
-      setSelectedAbilityTargetIds(nextTargets);
-
-      if (targetMode === "two_cards" && nextTargets.length === 2) {
-        sendAction({
-          type: "ability",
-          card_id: selectedAbilityCard.instance_id,
-          target_type: "card",
-          target_ids: nextTargets,
-          target_id: nextTargets[0],
-        });
-        setSelectedAbilityCardId(null);
-        setSelectedAbilityTargetIds([]);
-      }
-      return;
-    }
-
-    sendAction({
-      type: "ability",
-      card_id: selectedAbilityCard.instance_id,
-      target_type: "card",
-      target_id: card.instance_id,
-    });
+  function closeTargetModal() {
+    setTargetModal(null);
+    setSelectedAttackerId(null);
     setSelectedAbilityCardId(null);
     setSelectedAbilityTargetIds([]);
   }
 
-  function confirmAbilityTargets() {
-    if (!selectedAbilityCard || selectedAbilityTargetIds.length === 0) {
+  function openAttackTargetModal(cardId: string) {
+    if (!myPlayer || !topPlayer) {
       return;
     }
+    const attacker = myPlayer.battlefield.find((card) => card.instance_id === cardId);
+    if (!attacker) {
+      return;
+    }
+
+    const targetCards = topPlayer.battlefield.filter(
+      (card) => !roomState || card.cannot_be_attack_target_until_turn < roomState.turn_number,
+    );
+
+    setSelectedAbilityCardId(null);
+    setSelectedAbilityTargetIds([]);
+    setSelectedAttackerId(cardId);
+    pulseAction(`${cardId}:attack`);
+
+    if (targetCards.length === 0) {
+      return;
+    }
+
+    setTargetModal({
+      kind: "attack",
+      sourceCardId: cardId,
+      sourceCardName: attacker.name,
+      title: "Escolha o alvo do ataque",
+      description: "Selecione uma carta inimiga para receber o ataque desta rodada.",
+      cards: targetCards,
+      minTargets: 1,
+      maxTargets: 1,
+    });
+  }
+
+  function openAbilityTargetModal(card: RuntimeBattleCard) {
+    const allyCards = myPlayer?.battlefield ?? [];
+    const enemyCards = topPlayer?.battlefield ?? [];
+    const targetMode = card.ability_target_mode;
+
+    if (["none", "all_cards", "all_enemy_cards"].includes(targetMode)) {
+      pulseAction(`${card.instance_id}:ability`);
+      sendAction({ type: "ability", card_id: card.instance_id });
+      return;
+    }
+
+    if (targetMode === "player") {
+      pulseAction(`${card.instance_id}:ability`);
+      sendAction({
+        type: "ability",
+        card_id: card.instance_id,
+        target_type: "player",
+      });
+      return;
+    }
+
+    const targetCards = resolveCardTargetPool(targetMode, allyCards, enemyCards);
+    if (targetCards.length === 0 && targetMode !== "card_or_player") {
+      setErrorMessage("Nao ha cartas validas para essa habilidade agora.");
+      return;
+    }
+
+    setSelectedAttackerId(null);
+    setSelectedAbilityCardId(card.instance_id);
+    setSelectedAbilityTargetIds([]);
+    pulseAction(`${card.instance_id}:ability`);
+    setTargetModal({
+      kind: "ability",
+      sourceCardId: card.instance_id,
+      sourceCardName: card.name,
+      title: "Escolha o alvo da habilidade",
+      description:
+        targetMode === "ally_card"
+          ? "Selecione uma carta aliada para receber o efeito."
+          : targetMode === "card"
+            ? "Selecione uma carta inimiga valida para receber o efeito."
+            : ["two_cards", "up_to_two_cards"].includes(targetMode)
+              ? "Selecione cartas validas do campo conforme o limite dessa habilidade."
+          : targetMode === "card_or_player"
+            ? "Selecione uma carta inimiga ou use a opcao de alvejar o duelista."
+            : "Selecione as cartas que receberao o efeito.",
+      cards: targetCards,
+      minTargets: targetMode === "up_to_two_cards" ? 1 : targetMode === "two_cards" ? 2 : 1,
+      maxTargets: targetMode === "two_cards" || targetMode === "up_to_two_cards" ? 2 : 1,
+      allowPlayerTarget: targetMode === "card_or_player",
+    });
+  }
+
+  function toggleTargetModalCard(cardId: string) {
+    if (!targetModal) {
+      return;
+    }
+
+    if (targetModal.maxTargets === 1) {
+      setSelectedAbilityTargetIds([cardId]);
+      return;
+    }
+
+    setSelectedAbilityTargetIds((current) => {
+      if (current.includes(cardId)) {
+        return current.filter((targetId) => targetId !== cardId);
+      }
+      return [...current, cardId].slice(0, targetModal.maxTargets);
+    });
+  }
+
+  function confirmTargetModal() {
+    if (!targetModal) {
+      return;
+    }
+
+    if (selectedAbilityTargetIds.length < targetModal.minTargets) {
+      return;
+    }
+
+    if (targetModal.kind === "attack") {
+      sendAction({
+        type: "attack",
+        attacker_id: targetModal.sourceCardId,
+        target_type: "card",
+        target_id: selectedAbilityTargetIds[0],
+      });
+      closeTargetModal();
+      return;
+    }
+
     sendAction({
       type: "ability",
-      card_id: selectedAbilityCard.instance_id,
+      card_id: targetModal.sourceCardId,
       target_type: "card",
       target_ids: selectedAbilityTargetIds,
       target_id: selectedAbilityTargetIds[0],
     });
-    setSelectedAbilityCardId(null);
-    setSelectedAbilityTargetIds([]);
+    closeTargetModal();
   }
 
   const actionSourceId = roomState?.last_action?.attacker_id ?? roomState?.last_action?.card_id ?? null;
@@ -581,8 +706,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               viewerRole={viewerRole}
               viewerSeat={viewerSeat}
               activeSeat={activeSeat}
-              onAttackTarget={handleAttackTarget}
-              onAbilityTarget={handleAbilityTarget}
+              pulsingActionKey={pulsingActionKey}
               onPracticeRemoveEnemyCard={
                 isPracticeMode
                   ? (card) => {
@@ -650,16 +774,6 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               </button>
             ) : null}
 
-            {selectedAbilityCard && selectedAbilityCard.ability_target_mode === "up_to_two_cards" ? (
-              <button
-                className="direct-attack-button"
-                disabled={selectedAbilityTargetIds.length === 0}
-                onClick={confirmAbilityTargets}
-              >
-                Confirmar alvos ({selectedAbilityTargetIds.length}/2)
-              </button>
-            ) : null}
-
             <BattlefieldSection
               title={viewerRole === "spectator" ? "Campo inferior" : "Seu campo"}
               cards={bottomPlayer?.battlefield ?? []}
@@ -677,31 +791,23 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               viewerRole={viewerRole}
               viewerSeat={viewerSeat}
               activeSeat={activeSeat}
-              onAttackTarget={handleAttackTarget}
-              onAbilityTarget={handleAbilityTarget}
+              pulsingActionKey={pulsingActionKey}
               onSelectAttack={(cardId) => {
-                setSelectedAbilityCardId(null);
-                setSelectedAbilityTargetIds([]);
                 setPendingSummonSlug(null);
-                setSelectedAttackerId((current) => (current === cardId ? null : cardId));
+                openAttackTargetModal(cardId);
               }}
               onSelectAbility={(card) => {
-                if (["none", "all_cards", "all_enemy_cards"].includes(card.ability_target_mode)) {
-                  sendAction({ type: "ability", card_id: card.instance_id });
-                  return;
-                }
-                setSelectedAttackerId(null);
-                setSelectedAbilityTargetIds([]);
                 setPendingSummonSlug(null);
-                setSelectedAbilityCardId((current) => (current === card.instance_id ? null : card.instance_id));
+                openAbilityTargetModal(card);
               }}
-              onChangePosition={(card) =>
+              onChangePosition={(card) => {
+                pulseAction(`${card.instance_id}:position`);
                 sendAction({
                   type: "change_position",
                   card_id: card.instance_id,
                   position: card.position === "attack" ? "defense" : "attack",
-                })
-              }
+                });
+              }}
               isDropEnabled={isMyTurn}
               activeDropSlot={highlightedSlotIndex}
               onSlotDragEnter={(slotIndex) => setActiveDropSlot(slotIndex)}
@@ -870,6 +976,101 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
             <strong>{outcomeCopy.title}</strong>
             <p>{outcomeCopy.subtitle}</p>
           </div>
+        </div>
+      ) : null}
+
+      {targetModal ? (
+        <div className="target-modal-backdrop" onClick={closeTargetModal}>
+          <section className="target-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="target-modal__header">
+              <div>
+                <p className="section-tag">Selecao de alvo</p>
+                <h3>{targetModal.title}</h3>
+                <p>{targetModal.description}</p>
+              </div>
+              <button className="ghost-button" onClick={closeTargetModal}>
+                Fechar
+              </button>
+            </div>
+
+            <div className="target-modal__source">
+              <span>Carta ativa</span>
+              <strong>{targetModal.sourceCardName}</strong>
+            </div>
+
+            <div className="target-modal__grid">
+              {targetModal.cards.map((card) => (
+                <button
+                  key={`target-${card.instance_id}`}
+                  type="button"
+                  className={[
+                    "target-modal__card-button",
+                    selectedAbilityTargetIds.includes(card.instance_id) ? "target-modal__card-button--selected" : "",
+                  ].join(" ")}
+                  onClick={() => toggleTargetModalCard(card.instance_id)}
+                >
+                  <BattleCard
+                    variant="hand"
+                    card={{
+                      slug: card.slug,
+                      name: card.name,
+                      title: card.title,
+                      description: card.description,
+                      card_type: card.card_type,
+                      attribute: card.attribute,
+                      level: card.level,
+                      mana_cost: card.mana_cost,
+                      primary_color: card.primary_color,
+                      secondary_color: card.secondary_color,
+                      image_path: card.image_path,
+                      ability_name: card.ability_name,
+                      ability_text: card.ability_text,
+                      ability_elixir_cost: card.ability_elixir_cost,
+                      ability_limit_scope: card.ability_limit_scope,
+                      ability_limit_count: card.ability_limit_count,
+                      ability_target_mode: card.ability_target_mode,
+                      attack: card.attack,
+                      base_attack: card.base_attack,
+                      defense: card.defense,
+                      base_defense: card.base_defense,
+                      health: card.max_health,
+                      current_health: card.current_health,
+                      max_health: card.max_health,
+                      position: card.position,
+                      is_token: card.is_token,
+                      token_kind: card.token_kind,
+                    }}
+                    isSelected={selectedAbilityTargetIds.includes(card.instance_id)}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <div className="target-modal__actions">
+              {targetModal.allowPlayerTarget ? (
+                <button
+                  className="ghost-button"
+                  onClick={() => {
+                    sendAction({
+                      type: "ability",
+                      card_id: targetModal.sourceCardId,
+                      target_type: "player",
+                    });
+                    closeTargetModal();
+                  }}
+                >
+                  Alvejar duelista
+                </button>
+              ) : null}
+              <button
+                className="end-turn-button"
+                disabled={selectedAbilityTargetIds.length < targetModal.minTargets}
+                onClick={confirmTargetModal}
+              >
+                Confirmar alvo{targetModal.maxTargets > 1 ? "s" : ""}
+              </button>
+            </div>
+          </section>
         </div>
       ) : null}
 

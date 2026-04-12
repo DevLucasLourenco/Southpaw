@@ -33,7 +33,6 @@ level: 9
 attack: 2900
 defense: 2100
 health: 3000
-agility: 3
 mana_cost: 10
 primary_color: '#A84A2A'
 secondary_color: '#E0B36B'
@@ -97,7 +96,6 @@ level: 4
 attack: 900
 defense: 1400
 health: 1500
-agility: 5
 mana_cost: 4
 primary_color: '#D8D1BA'
 secondary_color: '#355A7A'
@@ -161,7 +159,6 @@ level: 6
 attack: 1700
 defense: 2400
 health: 2800
-agility: 3
 mana_cost: 6
 primary_color: '#8A7E67'
 secondary_color: '#E6C76A'
@@ -225,7 +222,6 @@ nivel: 4
 ataque: 1900
 defesa: 2100
 vida: 2600
-agilidade: 2
 custo_mana: 6
 cor_primaria: '#C9A227'
 cor_secundaria: '#FFD700'
@@ -292,7 +288,6 @@ level: 3
 attack: 800
 defense: 1500
 health: 1700
-agility: 4
 mana_cost: 3
 primary_color: '#A44A39'
 secondary_color: '#F0C38C'
@@ -356,7 +351,6 @@ level: 5
 attack: 1900
 defense: 1100
 health: 1800
-agility: 7
 mana_cost: 4
 primary_color: '#5BD7E8'
 secondary_color: '#D9F6FF'
@@ -420,7 +414,6 @@ level: 5
 attack: 1600
 defense: 1200
 health: 1700
-agility: 6
 mana_cost: 4
 primary_color: '#7C2C39'
 secondary_color: '#B08AD6'
@@ -484,7 +477,6 @@ level: 3
 attack: 700
 defense: 1300
 health: 1200
-agility: 5
 mana_cost: 3
 primary_color: '#C8C0A5'
 secondary_color: '#6B84A0'
@@ -548,7 +540,6 @@ level: 4
 attack: 1400
 defense: 1600
 health: 1900
-agility: 4
 mana_cost: 4
 primary_color: '#6D3A30'
 secondary_color: '#D88F4B'
@@ -612,7 +603,6 @@ level: 6
 attack: 1200
 defense: 1700
 health: 1600
-agility: 5
 mana_cost: 5
 primary_color: '#4A2335'
 secondary_color: '#C3B5E9'
@@ -676,7 +666,6 @@ level: 6
 attack: 1800
 defense: 2600
 health: 2900
-agility: 2
 mana_cost: 6
 primary_color: '#7A756A'
 secondary_color: '#DDBE69'
@@ -740,7 +729,6 @@ level: 2
 attack: 1100
 defense: 700
 health: 1000
-agility: 8
 mana_cost: 2
 primary_color: '#688EA7'
 secondary_color: '#D6F4FF'
