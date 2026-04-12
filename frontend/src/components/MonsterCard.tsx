@@ -1,6 +1,41 @@
-import { useState, type CSSProperties } from "react";
+﻿import { useState, type CSSProperties } from "react";
 
 import type { Monster } from "../features/monsters/types";
+
+function formatAbilityLimit(scope: string, count: number) {
+  if (!count || count <= 0) {
+    return "Sem uso";
+  }
+  if (scope === "duel") {
+    return `${count}x duelo`;
+  }
+  return `${count}x turno`;
+}
+
+function formatTargetMode(targetMode: string) {
+  switch (targetMode) {
+    case "none":
+      return "Sem alvo";
+    case "card":
+      return "Alvo: carta";
+    case "player":
+      return "Alvo: duelista";
+    case "card_or_player":
+      return "Alvo: carta/duelista";
+    case "ally_card":
+      return "Alvo: aliada";
+    case "two_cards":
+      return "Alvo: 2 cartas";
+    case "up_to_two_cards":
+      return "Alvo: ate 2";
+    case "all_cards":
+      return "Alvo: todas";
+    case "all_enemy_cards":
+      return "Alvo: campo inimigo";
+    default:
+      return "Alvo: livre";
+  }
+}
 
 type MonsterCardProps = {
   monster: Monster;
@@ -14,27 +49,25 @@ export function MonsterCard({ monster }: MonsterCardProps) {
   } as CSSProperties;
 
   return (
-    <article className="monster-card" style={style}>
+    <article className="monster-card monster-card--tcg" style={style}>
       <div className="monster-card__foil" />
+
       <header className="monster-card__header">
         <div>
           <p className="monster-card__eyebrow">{monster.card_type}</p>
           <h2>{monster.name}</h2>
-          <p className="monster-card__title">{monster.title}</p>
         </div>
-        <div className="monster-card__meta">
-          <span className="monster-card__attribute">{monster.attribute}</span>
-          <span className="monster-card__cost">{monster.mana_cost}</span>
+        <div className="monster-card__cost">
+          <span>{monster.mana_cost}</span>
         </div>
       </header>
 
-      <div className="monster-card__stars" aria-label={`Level ${monster.level}`}>
-        {Array.from({ length: monster.level }).map((_, index) => (
-          <span key={`${monster.slug}-star-${index}`}>★</span>
-        ))}
+      <div className="monster-card__meta-row">
+        <span>{monster.attribute}</span>
+        <span>Nv {monster.level}</span>
       </div>
 
-      <figure className="monster-card__art">
+      <figure className="monster-card__art monster-card__art--tcg">
         {imageHidden ? (
           <div className="monster-card__placeholder">
             <span>{monster.name}</span>
@@ -46,18 +79,34 @@ export function MonsterCard({ monster }: MonsterCardProps) {
             onError={() => setImageHidden(true)}
           />
         )}
-        <figcaption>{monster.lore}</figcaption>
       </figure>
 
-      <section className="monster-card__description">
-        <p>{monster.description}</p>
-        <div className="monster-card__ability">
-          <strong>{monster.ability_name}</strong>
-          <span>{monster.ability_text}</span>
+      <section className="monster-card__title-box">
+        <strong>{monster.title}</strong>
+      </section>
+
+      <section className="monster-card__effect-box">
+        <div className="monster-card__effect-copy">
+          <label>Descricao</label>
+          <p>{monster.description}</p>
+        </div>
+        <div className="monster-card__effect-copy">
+          <label>{monster.ability_name}</label>
+          <p>{monster.ability_text}</p>
+        </div>
+        <div className="monster-card__effect-copy monster-card__effect-copy--flavor">
+          <label>Lenda</label>
+          <p>{monster.lore}</p>
         </div>
       </section>
 
-      <footer className="monster-card__stats">
+      <div className="monster-card__contract">
+        <span>Hab {monster.ability_elixir_cost}</span>
+        <span>{formatAbilityLimit(monster.ability_limit_scope, monster.ability_limit_count)}</span>
+        <span>{formatTargetMode(monster.ability_target_mode)}</span>
+      </div>
+
+      <footer className="monster-card__stats monster-card__stats--tcg">
         <div>
           <span>ATK</span>
           <strong>{monster.attack}</strong>
@@ -69,10 +118,6 @@ export function MonsterCard({ monster }: MonsterCardProps) {
         <div>
           <span>HP</span>
           <strong>{monster.health}</strong>
-        </div>
-        <div>
-          <span>AGI</span>
-          <strong>{monster.agility}</strong>
         </div>
       </footer>
     </article>

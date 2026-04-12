@@ -10,10 +10,6 @@ class CardContract(Protocol):
     def mana_cost(self) -> int:
         ...
 
-    @property
-    def agility(self) -> int:
-        ...
-
     def export_summary(self) -> dict:
         ...
 

@@ -1,4 +1,4 @@
-﻿import { useState, type CSSProperties, type DragEventHandler, type ReactNode } from "react";
+import { useState, type CSSProperties, type DragEventHandler } from 'react';
 
 type BattleCardVisual = {
   slug: string;
@@ -14,13 +14,17 @@ type BattleCardVisual = {
   image_path: string;
   ability_name: string;
   ability_text?: string;
-  ability_elixir_cost: number;
+  ability_elixir_cost?: number;
+  ability_limit_scope?: string;
+  ability_limit_count?: number;
+  ability_target_mode?: string;
   attack: number;
+  base_attack?: number;
   defense: number;
-  agility: number;
+  base_defense?: number;
   is_token?: boolean;
   token_kind?: string | null;
-  position?: "attack" | "defense";
+  position?: 'attack' | 'defense';
   health?: number;
   current_health?: number;
   max_health?: number;
@@ -28,7 +32,7 @@ type BattleCardVisual = {
 
 type BattleCardProps = {
   card: BattleCardVisual;
-  variant?: "field" | "reserve" | "hand";
+  variant?: 'field' | 'reserve' | 'hand';
   isSelectable?: boolean;
   isSelected?: boolean;
   isActionSource?: boolean;
@@ -40,12 +44,11 @@ type BattleCardProps = {
   onClick?: () => void;
   onDragStart?: DragEventHandler<HTMLElement>;
   onDragEnd?: DragEventHandler<HTMLElement>;
-  footer?: ReactNode;
 };
 
 export function BattleCard({
   card,
-  variant = "field",
+  variant = 'field',
   isSelectable = false,
   isSelected = false,
   isActionSource = false,
@@ -57,33 +60,39 @@ export function BattleCard({
   onClick,
   onDragStart,
   onDragEnd,
-  footer,
 }: BattleCardProps) {
   const [imageHidden, setImageHidden] = useState(false);
 
   const style = {
-    "--card-primary": card.is_token ? "#f5f2ea" : card.primary_color,
-    "--card-secondary": card.is_token ? "#d8d2c2" : card.secondary_color,
+    '--card-primary': card.is_token ? '#f5f2ea' : card.primary_color,
+    '--card-secondary': card.is_token ? '#d8d2c2' : card.secondary_color,
   } as CSSProperties;
 
-  const healthValue = variant === "field" ? card.current_health ?? card.health ?? 0 : card.health ?? card.max_health ?? 0;
-  const healthCap = variant === "field" ? card.max_health ?? card.health ?? 0 : card.health ?? card.max_health ?? 0;
+  const healthValue =
+    variant === 'field'
+      ? (card.current_health ?? card.health ?? 0)
+      : (card.health ?? card.max_health ?? 0);
+  const healthCap =
+    variant === 'field'
+      ? (card.max_health ?? card.health ?? 0)
+      : (card.health ?? card.max_health ?? 0);
+  const imageSource = `http://localhost:8000${card.image_path}`;
 
   return (
     <article
       className={[
-        "battle-card",
-        variant === "reserve" ? "battle-card--reserve" : "",
-        variant === "hand" ? "battle-card--hand" : "",
-        isSelectable ? "battle-card--selectable" : "",
-        isSelected ? "battle-card--selected" : "",
-        isActionSource ? "battle-card--action-source" : "",
-        isActionTarget ? "battle-card--action-target" : "",
-        isSummoning ? "battle-card--summoning" : "",
-        isDestroyed ? "battle-card--destroyed" : "",
-        isDamaged ? "battle-card--damaged" : "",
-        card.is_token ? "battle-card--token" : "",
-      ].join(" ")}
+        'battle-card',
+        variant === 'reserve' ? 'battle-card--reserve' : '',
+        variant === 'hand' ? 'battle-card--hand' : '',
+        isSelectable ? 'battle-card--selectable' : '',
+        isSelected ? 'battle-card--selected' : '',
+        isActionSource ? 'battle-card--action-source' : '',
+        isActionTarget ? 'battle-card--action-target' : '',
+        isSummoning ? 'battle-card--summoning' : '',
+        isDestroyed ? 'battle-card--destroyed' : '',
+        isDamaged ? 'battle-card--damaged' : '',
+        card.is_token ? 'battle-card--token' : '',
+      ].join(' ')}
       style={style}
       draggable={draggable}
       onClick={onClick}
@@ -91,57 +100,75 @@ export function BattleCard({
       onDragEnd={onDragEnd}
     >
       <div className="battle-card__frame-glow" />
-      <header className="battle-card__header">
-        <div>
-          <span>
-            {card.is_token ? "TOKEN" : card.card_type}
-            {card.position ? ` | ${card.position === "attack" ? "ATK" : "DEF"}` : ""}
-          </span>
-          <strong>{card.name}</strong>
-        </div>
-        <div className="battle-card__cost">{card.is_token ? "T" : card.mana_cost}</div>
-      </header>
 
-      <div className="battle-card__meta">
+      <div className="battle-card__superline">
+        <span>{card.is_token ? 'Token' : card.card_type}</span>
+        <span>|</span>
         <span>{card.attribute}</span>
-        <span>Nivel {card.level ?? "-"}</span>
       </div>
 
-      <div className="battle-card__art">
-        <div className="battle-card__art-frame">
+      <div className="battle-card__headline">
+        <strong>{card.name}</strong>
+        <span className="battle-card__mana-orb">{card.is_token ? 'T' : card.mana_cost}</span>
+      </div>
+
+      <div className="battle-card__art-row">
+        <div className="battle-card__art-shell">
           {imageHidden ? (
             <div className="battle-card__placeholder">
-              <span>{card.is_token ? "TOKEN" : card.name}</span>
+              <span>{card.is_token ? 'TOKEN' : card.name}</span>
             </div>
           ) : (
             <img
-              src={`http://localhost:8000${card.image_path}`}
+              className="battle-card__image"
+              src={imageSource}
               alt={card.name}
               draggable={false}
               onError={() => setImageHidden(true)}
             />
           )}
+
+          {card.position ? (
+            <span
+              className={[
+                'battle-card__stance-badge',
+                card.position === 'attack'
+                  ? 'battle-card__stance-badge--attack'
+                  : 'battle-card__stance-badge--defense',
+              ].join(' ')}
+            >
+              {card.position === 'attack' ? 'ATK' : 'DEF'}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="battle-card__side-stats">
+          <div className="battle-card__side-stat">
+            <span>HP</span>
+            <strong>{variant === 'field' ? `${healthValue}/\n${healthCap}` : `${healthCap}/\n${healthCap}`}</strong>
+          </div>
+          <div className="battle-card__side-stat battle-card__side-stat--divider">
+            <span>ATK</span>
+            <strong>{card.attack}</strong>
+          </div>
+          <div className="battle-card__side-stat battle-card__side-stat--divider">
+            <span>DEF</span>
+            <strong>{card.defense}</strong>
+          </div>
         </div>
       </div>
 
-      <div className="battle-card__body">
-        <div className="battle-card__title-box">
-          <strong>{card.title}</strong>
-          {card.description ? <span>{card.description}</span> : null}
-        </div>
-        <div className="battle-card__stats">
-          <span>{variant === "field" ? `HP ${healthValue}/${healthCap}` : `HP ${healthCap}`}</span>
-          <span>ATK {card.attack}</span>
-          <span>DEF {card.defense}</span>
-          <span>AGI {card.agility}</span>
-        </div>
-        <p className="battle-card__ability">
-          <strong>{card.is_token ? card.ability_name : `${card.ability_name} (${card.ability_elixir_cost})`}</strong>
-          <span>{card.ability_text ?? card.title}</span>
+      <div className="battle-card__divider" />
+
+      <div className="battle-card__effect-box">
+        <strong className="battle-card__ability-name">{card.ability_name}</strong>
+        <p className="battle-card__ability-text">
+          {card.ability_text ?? card.title ?? card.description ?? 'Sem habilidade registrada.'}
         </p>
       </div>
 
-      {footer ? <div className="battle-card__footer">{footer}</div> : null}
+      <div className="battle-card__divider" />
+
     </article>
   );
 }

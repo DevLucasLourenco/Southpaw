@@ -87,6 +87,7 @@ export function BattlefieldSection({
           const isGhost = !card && Boolean(ghost);
           const isSlotDroppable = isDropEnabled && !card;
           const isSlotDropActive = activeDropSlot === index;
+          const canShowControls = Boolean(card && onSelectAttack && onSelectAbility && viewerRole === "player" && viewerSeat === activeSeat);
 
           return (
             <div
@@ -126,78 +127,76 @@ export function BattlefieldSection({
               }
             >
               {displayCard ? (
-                <BattleCard
-                  card={displayCard}
-                  isSelectable={Boolean(card && (selectedAttacker || selectedAbilityCard))}
-                  isSelected={Boolean(
-                    card &&
-                      (
-                        selectedAttackerId === card.instance_id ||
-                        selectedAbilityCardId === card.instance_id ||
-                        selectedAbilityTargetIds.includes(card.instance_id)
-                      ),
-                  )}
-                  isActionSource={Boolean(card && actionSourceId === card.instance_id)}
-                  isActionTarget={Boolean(card && actionTargetId === card.instance_id)}
-                  isSummoning={Boolean(card && summoningCardId === card.instance_id)}
-                  isDestroyed={isGhost}
-                  isDamaged={Boolean(card && damagedCardIds.has(card.instance_id))}
-                  onClick={
-                    card
-                      ? () => {
-                          if (selectedAttacker) {
-                            onAttackTarget(card);
-                          } else if (selectedAbilityCard) {
-                            onAbilityTarget(card);
+                <div className="battlefield__card-stack">
+                  <BattleCard
+                    card={displayCard}
+                    isSelectable={Boolean(card && (selectedAttacker || selectedAbilityCard))}
+                    isSelected={Boolean(
+                      card && (selectedAttackerId === card.instance_id || selectedAbilityCardId === card.instance_id || selectedAbilityTargetIds.includes(card.instance_id)),
+                    )}
+                    isActionSource={Boolean(card && actionSourceId === card.instance_id)}
+                    isActionTarget={Boolean(card && actionTargetId === card.instance_id)}
+                    isSummoning={Boolean(card && summoningCardId === card.instance_id)}
+                    isDestroyed={isGhost}
+                    isDamaged={Boolean(card && damagedCardIds.has(card.instance_id))}
+                    onClick={
+                      card
+                        ? () => {
+                            if (selectedAttacker) {
+                              onAttackTarget(card);
+                            } else if (selectedAbilityCard) {
+                              onAbilityTarget(card);
+                            }
                           }
-                        }
-                      : undefined
-                  }
-                  footer={
-                    card && onSelectAttack && onSelectAbility && viewerRole === "player" && viewerSeat === activeSeat ? (
-                      <div className="battle-card__actions">
-                        <button
-                          disabled={!card.can_attack || card.position !== "attack"}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onSelectAttack(card.instance_id);
-                          }}
-                        >
-                          Atacar
-                        </button>
-                        <button
-                          disabled={!card.can_use_ability}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onSelectAbility(card);
-                          }}
-                        >
-                          Hab. {card.ability_elixir_cost}
-                        </button>
-                        <button
-                          disabled={!card.can_change_position}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onChangePosition?.(card);
-                          }}
-                        >
-                          {card.position === "attack" ? "DEF" : "ATK"}
-                        </button>
-                      </div>
-                    ) : card && onPracticeRemoveEnemyCard && viewerRole === "player" ? (
-                      <div className="battle-card__actions">
-                        <button
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onPracticeRemoveEnemyCard(card);
-                          }}
-                        >
-                          Remover
-                        </button>
-                      </div>
-                    ) : null
-                  }
-                />
+                        : undefined
+                    }
+                  />
+
+                  {canShowControls && card ? (
+                    <div className="battlefield__interaction-bar">
+                      <button
+                        disabled={!card.can_attack || card.position !== "attack"}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onSelectAttack?.(card.instance_id);
+                        }}
+                      >
+                        Atacar
+                      </button>
+                      <button
+                        disabled={!card.can_use_ability}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onSelectAbility?.(card);
+                        }}
+                      >
+                        Hab. {card.ability_elixir_cost}
+                      </button>
+                      <button
+                        disabled={!card.can_change_position}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onChangePosition?.(card);
+                        }}
+                      >
+                        Alterar posicao
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {card && onPracticeRemoveEnemyCard && viewerRole === "player" ? (
+                    <div className="battlefield__interaction-bar battlefield__interaction-bar--single">
+                      <button
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onPracticeRemoveEnemyCard(card);
+                        }}
+                      >
+                        Remover
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
               ) : (
                 <button
                   type="button"

@@ -32,6 +32,55 @@ function buildFacedownCards(count: number) {
   return Array.from({ length: Math.min(count, 7) }, (_, index) => index);
 }
 
+function inferMatchEndReason(roomState: BattleRoomState) {
+  const lastLogEntry = roomState.log[roomState.log.length - 1]?.toLowerCase() ?? "";
+  const players = [roomState.players.player_one, roomState.players.player_two].filter(
+    (player): player is NonNullable<typeof roomState.players.player_one> => Boolean(player),
+  );
+
+  if (lastLogEntry.includes("time expired")) {
+    return "por tempo esgotado";
+  }
+
+  if (players.some((player) => player.health <= 0)) {
+    return "por vida esgotada";
+  }
+
+  return "com supremacia na mesa";
+}
+
+function buildOutcomeCopy(roomState: BattleRoomState, viewerSeat: "player_one" | "player_two" | null, viewerRole: "player" | "spectator") {
+  if (!roomState.completed || !roomState.winner_seat) {
+    return null;
+  }
+
+  const winner = roomState.players[roomState.winner_seat];
+  const winnerName = winner?.display_name ?? "Duelista vencedor";
+  const reason = inferMatchEndReason(roomState);
+
+  if (viewerRole === "spectator" || !viewerSeat) {
+    return {
+      tone: "neutral" as const,
+      title: "Duelo encerrado",
+      subtitle: `${winnerName} venceu ${reason}.`,
+    };
+  }
+
+  if (roomState.winner_seat === viewerSeat) {
+    return {
+      tone: "victory" as const,
+      title: "Vitoria",
+      subtitle: `Seu lado venceu ${reason}.`,
+    };
+  }
+
+  return {
+    tone: "defeat" as const,
+    title: "Derrota",
+    subtitle: `${winnerName} venceu ${reason}.`,
+  };
+}
+
 export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   const params = new URLSearchParams(window.location.search);
   const [draftName, setDraftName] = useState(params.get("name") ?? "");
@@ -56,6 +105,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   const [pendingSummonSlotIndex, setPendingSummonSlotIndex] = useState<number | null>(null);
   const [practiceSelectedSlug, setPracticeSelectedSlug] = useState<string | null>(null);
   const [practiceTargetSlotIndex, setPracticeTargetSlotIndex] = useState<number | null>(null);
+  const [practiceModalOpen, setPracticeModalOpen] = useState(false);
   const prevStateRef = useRef<BattleRoomState | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
@@ -171,6 +221,10 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
     () => (practiceSelectedSlug ? monsterMap.get(practiceSelectedSlug) ?? null : null),
     [monsterMap, practiceSelectedSlug],
   );
+  const outcomeCopy = useMemo(
+    () => (roomState ? buildOutcomeCopy(roomState, viewerSeat, viewerRole) : null),
+    [roomState, viewerRole, viewerSeat],
+  );
 
   useEffect(() => {
     if (!roomState) {
@@ -249,6 +303,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
       setPracticeSelectedSlug(null);
       setPracticeTargetSlotIndex(null);
       setActiveDropSlot(null);
+      setPracticeModalOpen(false);
     }
     if (roomState?.last_action?.kind === "practice_remove_enemy") {
       setPracticeTargetSlotIndex(null);
@@ -509,66 +564,6 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               </div>
             </section>
 
-            {isPracticeMode ? (
-              <section className="practice-lab-panel">
-                <div className="practice-lab-panel__header">
-                  <div>
-                    <p className="section-tag">Laboratorio do robo</p>
-                    <h3>Escolha cartas para o campo inimigo</h3>
-                  </div>
-                  <span className="practice-lab-panel__status">
-                    {practiceSelectedMonster
-                      ? practiceTargetSlotIndex === null
-                        ? `Carta escolhida: ${practiceSelectedMonster.name}`
-                        : `Zona alvo: ${practiceTargetSlotIndex + 1}`
-                      : "Selecione uma carta para testar"}
-                  </span>
-                </div>
-
-                <div className="practice-lab-grid">
-                  {(monstersQuery.data?.items ?? []).map((monster) => (
-                    <button
-                      key={`practice-${monster.slug}`}
-                      type="button"
-                      className={[
-                        "practice-lab-card",
-                        practiceSelectedSlug === monster.slug ? "practice-lab-card--selected" : "",
-                      ].join(" ")}
-                      onClick={() => {
-                        setPracticeSelectedSlug(monster.slug);
-                        setPracticeTargetSlotIndex(null);
-                        setActiveDropSlot(null);
-                      }}
-                    >
-                      <BattleCard
-                        variant="reserve"
-                        card={{
-                          slug: monster.slug,
-                          name: monster.name,
-                          title: monster.title,
-                          description: monster.description,
-                          card_type: monster.card_type,
-                          attribute: monster.attribute,
-                          level: monster.level,
-                          mana_cost: monster.mana_cost,
-                          primary_color: monster.primary_color,
-                          secondary_color: monster.secondary_color,
-                          image_path: monster.image_path,
-                          ability_name: monster.ability_name,
-                          ability_text: monster.ability_text,
-                          ability_elixir_cost: monster.ability_elixir_cost,
-                          attack: monster.attack,
-                          defense: monster.defense,
-                          agility: monster.agility,
-                          health: monster.health,
-                        }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
             <BattlefieldSection
               title={viewerRole === "spectator" ? "Campo superior" : "Campo adversario"}
               cards={topPlayer?.battlefield ?? []}
@@ -812,11 +807,18 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
                 <div className="hand-command-bar__hint">
                   Arraste uma carta da mao para o seu campo ou clique nela para escolher o modo de invocacao.
                 </div>
-                {viewerSeat === activeSeat ? (
-                  <button className="end-turn-button" onClick={() => sendAction({ type: "end_turn" })}>
-                    {isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
-                  </button>
-                ) : null}
+                <div className="hand-command-bar__actions">
+                  {isPracticeMode ? (
+                    <button className="ghost-button" onClick={() => setPracticeModalOpen(true)}>
+                      Abrir selecao do robo
+                    </button>
+                  ) : null}
+                  {viewerSeat === activeSeat ? (
+                    <button className="end-turn-button" onClick={() => sendAction({ type: "end_turn" })}>
+                      {isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
+                    </button>
+                  ) : null}
+                </div>
               </div>
             ) : null}
 
@@ -858,6 +860,84 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               </div>
             </div>
           </aside>
+        </div>
+      ) : null}
+
+      {outcomeCopy ? (
+        <div className={["battle-outcome-banner", `battle-outcome-banner--${outcomeCopy.tone}`].join(" ")}>
+          <div className="battle-outcome-banner__inner">
+            <span className="battle-outcome-banner__tag">Resultado do duelo</span>
+            <strong>{outcomeCopy.title}</strong>
+            <p>{outcomeCopy.subtitle}</p>
+          </div>
+        </div>
+      ) : null}
+
+      {roomState && isPracticeMode && practiceModalOpen ? (
+        <div className="practice-modal-backdrop" onClick={() => setPracticeModalOpen(false)}>
+          <section className="practice-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="practice-modal__header">
+              <div>
+                <p className="section-tag">Laboratorio do robo</p>
+                <h3>Selecione cartas para o campo inimigo</h3>
+                <p>
+                  {practiceSelectedMonster
+                    ? practiceTargetSlotIndex === null
+                      ? `Carta escolhida: ${practiceSelectedMonster.name}. Agora selecione uma zona vazia no campo inimigo.`
+                      : `Carta escolhida: ${practiceSelectedMonster.name}. Zona alvo: ${practiceTargetSlotIndex + 1}.`
+                    : "Escolha uma carta no grimorio abaixo para montar o campo inimigo."}
+                </p>
+              </div>
+              <button className="ghost-button" onClick={() => setPracticeModalOpen(false)}>
+                Fechar
+              </button>
+            </div>
+
+            <div className="practice-lab-grid practice-lab-grid--modal">
+              {(monstersQuery.data?.items ?? []).map((monster) => (
+                <button
+                  key={`practice-modal-${monster.slug}`}
+                  type="button"
+                  className={[
+                    "practice-lab-card",
+                    "practice-lab-card--modal",
+                    practiceSelectedSlug === monster.slug ? "practice-lab-card--selected" : "",
+                  ].join(" ")}
+                  onClick={() => {
+                    setPracticeSelectedSlug(monster.slug);
+                    setPracticeTargetSlotIndex(null);
+                    setActiveDropSlot(null);
+                  }}
+                >
+                  <BattleCard
+                    variant="hand"
+                    card={{
+                      slug: monster.slug,
+                      name: monster.name,
+                      title: monster.title,
+                      description: monster.description,
+                      card_type: monster.card_type,
+                      attribute: monster.attribute,
+                      level: monster.level,
+                      mana_cost: monster.mana_cost,
+                      primary_color: monster.primary_color,
+                      secondary_color: monster.secondary_color,
+                      image_path: monster.image_path,
+                      ability_name: monster.ability_name,
+                      ability_text: monster.ability_text,
+                      ability_elixir_cost: monster.ability_elixir_cost,
+                      ability_limit_scope: monster.ability_limit_scope,
+                      ability_limit_count: monster.ability_limit_count,
+                      ability_target_mode: monster.ability_target_mode,
+                      attack: monster.attack,
+                      defense: monster.defense,
+                      health: monster.health,
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
       ) : null}
     </section>

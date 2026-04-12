@@ -14,7 +14,6 @@ class MonsterBase(BaseModel):
     attack: int
     defense: int
     health: int
-    agility: int
     mana_cost: int
     primary_color: str
     secondary_color: str

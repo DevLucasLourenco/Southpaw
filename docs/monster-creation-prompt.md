@@ -1,4 +1,4 @@
-﻿# Monster Creation Prompt
+# Monster Creation Prompt
 
 ## Objective
 
@@ -33,6 +33,22 @@ Every new monster should feel like it belongs to the same universe and card line
 - medium shot or full-body shot preferred
 - background supports the creature instead of competing with it
 - readable anatomy, face, weapon, horns, wings, claws, or mantle silhouette
+
+## Image size contract
+
+The art must be created for the card art window, not for the full card frame.
+
+- target aspect ratio: `1.08:1`
+- ideal render size: `1200 x 1110 px`
+- premium alternative: `1400 x 1295 px`
+- minimum acceptable: `900 x 830 px`
+- safe area: keep the monster's important silhouette inside an `8%` margin on every edge
+
+For Midjourney:
+
+- use `--ar 11:10` as the closest ratio
+- compose the monster centered and fully readable inside the frame
+- do not let the main silhouette depend on the outermost edges
 
 ### Material rules
 
@@ -97,6 +113,10 @@ Role or battlefield identity: [ROLE]
 Attribute: [ATTRIBUTE]
 Primary color: [PRIMARY_COLOR]
 Secondary color: [SECONDARY_COLOR]
+Target art size: 1200 x 1110 px
+Target aspect ratio: 1.08:1
+Midjourney ratio: --ar 11:10
+Safe area: keep the monster silhouette inside an 8% inner margin
 
 Visual concept:
 [2 to 4 sentences describing anatomy, armor, posture, weapon, aura, and silhouette]
@@ -125,6 +145,8 @@ Art direction:
 - no comedic tone
 - no chibi proportions
 - no generic trading card border inside the art
+- render for a card-art window at 1200 x 1110 px or equivalent
+- keep the main creature inside an 8% safe area
 
 Negative constraints:
 - no flat studio look
@@ -159,9 +181,11 @@ Before approving a new monster art prompt, confirm:
 - the background supports the creature
 - the creature feels old, dangerous, and lore-bearing
 - the result fits Southpaw's world and card presentation
+- the art respects the `1200 x 1110 px` target or equivalent ratio
+- the creature stays inside the 8% safe area
 
 ## Short Prompt Version
 
 ```md
-Create a portrait-oriented premium dark-fantasy TCG monster illustration for Southpaw, with painterly realism, one clear central monster, dramatic magical lighting, ancient ruined-world atmosphere, strong silhouette, ornate materials, and a dominant two-color palette. The creature must feel mythic, dangerous, original, and suitable for a premium competitive card game.
+Create a premium dark-fantasy TCG monster illustration for Southpaw, designed for a card-art window in a near-square ratio, ideally 1200 x 1110 px, with one clear central monster, painterly realism, dramatic magical lighting, ancient ruined-world atmosphere, strong silhouette, ornate materials, and a dominant two-color palette. Keep the monster fully readable inside an 8% safe area and use --ar 11:10 when generating in Midjourney.
 ```

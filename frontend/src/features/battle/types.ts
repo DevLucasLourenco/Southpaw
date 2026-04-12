@@ -22,7 +22,6 @@ export type RuntimeBattleCard = {
   defense: number;
   max_health: number;
   current_health: number;
-  agility: number;
   mana_cost: number;
   primary_color: string;
   secondary_color: string;

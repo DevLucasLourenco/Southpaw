@@ -12,7 +12,6 @@ export type Monster = {
   attack: number;
   defense: number;
   health: number;
-  agility: number;
   mana_cost: number;
   primary_color: string;
   secondary_color: string;

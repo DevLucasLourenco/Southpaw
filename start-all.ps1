@@ -68,3 +68,7 @@ Write-Host "Backend: http://localhost:8000" -ForegroundColor Green
 Write-Host "Docs da API: http://localhost:8000/docs" -ForegroundColor Green
 Write-Host "Frontend: http://localhost:5173" -ForegroundColor Green
 Write-Host "Banco SQLite esperado em: backend/data/southpaw.db" -ForegroundColor Yellow
+
+Write-Step "Aguardando frontend iniciar..."
+Start-Sleep -Seconds 4
+Start-Process "http://localhost:5173"

@@ -56,7 +56,6 @@ class MonsterTemplate:
     attack: int
     defense: int
     health: int
-    agility: int
     mana_cost: int
     primary_color: str
     secondary_color: str
@@ -87,7 +86,6 @@ class RuntimeCard:
     defense: int
     max_health: int
     current_health: int
-    agility: int
     mana_cost: int
     primary_color: str
     secondary_color: str
@@ -136,7 +134,6 @@ class RuntimeCard:
             "defense": self.defense,
             "max_health": self.max_health,
             "current_health": self.current_health,
-            "agility": self.agility,
             "mana_cost": self.mana_cost,
             "primary_color": self.primary_color,
             "secondary_color": self.secondary_color,
@@ -187,7 +184,6 @@ class RuntimeCard:
             defense=data["defense"],
             max_health=data["max_health"],
             current_health=data["current_health"],
-            agility=data["agility"],
             mana_cost=data["mana_cost"],
             primary_color=data["primary_color"],
             secondary_color=data["secondary_color"],
@@ -751,7 +747,6 @@ class BattleRoom:
             defense=template.defense,
             max_health=template.health,
             current_health=template.health,
-            agility=template.agility,
             mana_cost=template.mana_cost,
             primary_color=template.primary_color,
             secondary_color=template.secondary_color,
@@ -778,7 +773,6 @@ class BattleRoom:
         attack: int,
         defense: int,
         health: int,
-        agility: int,
         image_path: str,
         token_kind: str,
         slot_index: int,
@@ -804,7 +798,6 @@ class BattleRoom:
             defense=max(0, defense),
             max_health=max(1, health),
             current_health=max(1, health),
-            agility=max(1, agility),
             mana_cost=0,
             primary_color="#F5F2EA",
             secondary_color="#D8D2C2",
@@ -878,7 +871,6 @@ class BattleRoom:
             attack=max(1, int(card.attack * scale)),
             defense=max(0, int(card.defense * scale)),
             health=max(1, int(card.current_health * scale)),
-            agility=max(1, int(card.agility * scale)),
             image_path=card.image_path,
             token_kind="clone",
             slot_index=slot_index,
@@ -1358,7 +1350,6 @@ class BattleRoomManager:
                 attack=monster.attack,
                 defense=monster.defense,
                 health=monster.health,
-                agility=monster.agility,
                 mana_cost=monster.mana_cost,
                 primary_color=monster.primary_color,
                 secondary_color=monster.secondary_color,

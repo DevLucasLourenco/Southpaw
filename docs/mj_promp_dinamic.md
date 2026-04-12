@@ -10,4 +10,4 @@ circular energy composition, aggressive perspective,
 painterly realism, dark fantasy concept art, highly detailed,
 TCG full art, readable silhouette, cinematic lighting,
 
---ar 5:7 --v 6 --style raw --q 2
+--ar 11:10 --v 6 --style raw --q 2

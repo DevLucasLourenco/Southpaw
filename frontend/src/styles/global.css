@@ -1,5 +1,5 @@
 :root {
-  font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
   color: #f3ead5;
   background:
     radial-gradient(circle at top, rgba(203, 155, 88, 0.22), transparent 35%),
@@ -8,9 +8,9 @@
   --surface: rgba(12, 16, 23, 0.78);
   --surface-border: rgba(250, 231, 194, 0.14);
   --text-muted: #c6bca7;
-  --battle-card-width: clamp(194px, 9.2vw, 232px);
+  --battle-card-width: clamp(188px, 9.4vw, 208px);
   --reserve-card-width: clamp(116px, 6.6vw, 132px);
-  --hand-card-width: clamp(228px, 11vw, 284px);
+  --hand-card-width: clamp(188px, 9.4vw, 208px);
   --battle-slot-gap: 16px;
 }
 
@@ -40,8 +40,7 @@ img {
   border: 1px solid var(--surface-border);
   border-radius: 28px;
   background:
-    linear-gradient(135deg, rgba(212, 165, 84, 0.13), rgba(52, 78, 127, 0.05)),
-    var(--surface);
+    linear-gradient(135deg, rgba(212, 165, 84, 0.13), rgba(52, 78, 127, 0.05)), var(--surface);
   backdrop-filter: blur(12px);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
 }
@@ -58,7 +57,7 @@ img {
 }
 
 .hero--grimoire::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 14px;
   border-radius: 22px;
@@ -197,8 +196,7 @@ img {
   padding: 14px 16px;
   border-radius: 18px;
   border: 1px solid rgba(233, 216, 184, 0.08);
-  background:
-    linear-gradient(180deg, rgba(255, 247, 226, 0.05), rgba(28, 24, 22, 0.92));
+  background: linear-gradient(180deg, rgba(255, 247, 226, 0.05), rgba(28, 24, 22, 0.92));
   color: #f0e5d0;
   text-align: left;
 }
@@ -288,8 +286,7 @@ img {
 .join-panel {
   border: 1px solid var(--surface-border);
   background:
-    linear-gradient(135deg, rgba(255, 221, 168, 0.06), rgba(48, 72, 105, 0.08)),
-    var(--surface);
+    linear-gradient(135deg, rgba(255, 221, 168, 0.06), rgba(48, 72, 105, 0.08)), var(--surface);
   backdrop-filter: blur(12px);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
 }
@@ -337,7 +334,10 @@ img {
 .role-toggle button {
   border: 0;
   cursor: pointer;
-  transition: transform 180ms ease, opacity 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .play-now-button {
@@ -526,7 +526,7 @@ img {
 }
 
 .arena-layout--table-focus .arena-board::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 12px;
   border-radius: 18px;
@@ -669,7 +669,7 @@ img {
 }
 
 .battlefield::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 8px;
   border-radius: 14px;
@@ -700,8 +700,7 @@ img {
   border-radius: 18px;
   border: 1px dashed rgba(255, 230, 183, 0.18);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.08)),
-    rgba(10, 14, 19, 0.55);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.08)), rgba(10, 14, 19, 0.55);
   color: rgba(240, 228, 200, 0.46);
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -782,7 +781,11 @@ img {
   border-radius: 6px;
   border: 1px dashed rgba(255, 235, 200, 0.16);
   background:
-    radial-gradient(circle at center, color-mix(in srgb, var(--card-secondary) 22%, transparent), transparent 48%),
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--card-secondary) 22%, transparent),
+      transparent 48%
+    ),
     rgba(17, 20, 26, 0.88);
   text-align: center;
 }
@@ -834,7 +837,7 @@ img {
 }
 
 .battle-card--summoning {
-  animation: summonRise 520ms cubic-bezier(.18,.89,.32,1.28);
+  animation: summonRise 520ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
 .battle-card--destroyed {
@@ -851,7 +854,11 @@ img {
   pointer-events: none;
   background:
     linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.09) 36%, transparent 60%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--card-secondary) 55%, transparent), transparent 34%);
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--card-secondary) 55%, transparent),
+      transparent 34%
+    );
 }
 
 .battle-card__header,
@@ -925,8 +932,7 @@ img {
   border-radius: 10px;
   border: 1px solid rgba(255, 235, 200, 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.12)),
-    rgba(10, 13, 18, 0.65);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.12)), rgba(10, 13, 18, 0.65);
 }
 
 .battle-card__art img {
@@ -937,7 +943,11 @@ img {
   object-position: center;
   border-radius: 6px;
   background:
-    radial-gradient(circle at center, color-mix(in srgb, var(--card-secondary) 28%, transparent), transparent 45%),
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--card-secondary) 28%, transparent),
+      transparent 45%
+    ),
     rgba(12, 16, 20, 0.95);
 }
 
@@ -1057,15 +1067,27 @@ img {
 }
 
 @keyframes sourcePulse {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(8px) scale(1.01); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px) scale(1.01);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 @keyframes targetFlash {
-  0% { box-shadow: 0 0 0 rgba(255, 0, 0, 0); }
-  50% { box-shadow: 0 0 0 3px rgba(255, 120, 95, 0.45); }
-  100% { box-shadow: 0 0 0 rgba(255, 0, 0, 0); }
+  0% {
+    box-shadow: 0 0 0 rgba(255, 0, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(255, 120, 95, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 0, 0, 0);
+  }
 }
 
 @keyframes summonRise {
@@ -1100,7 +1122,8 @@ img {
 }
 
 @keyframes cardDamageFlash {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow:
       inset 0 0 0 1px rgba(255, 255, 255, 0.06),
       0 12px 30px rgba(0, 0, 0, 0.24);
@@ -1114,13 +1137,16 @@ img {
 }
 
 @keyframes playerDamageFlash {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
   }
   25% {
     transform: translateX(-4px);
-    box-shadow: 0 0 0 2px rgba(255, 96, 96, 0.35), 0 18px 40px rgba(0, 0, 0, 0.22);
+    box-shadow:
+      0 0 0 2px rgba(255, 96, 96, 0.35),
+      0 18px 40px rgba(0, 0, 0, 0.22);
   }
   50% {
     transform: translateX(4px);
@@ -1142,8 +1168,13 @@ img {
 }
 
 @keyframes elixirPulse {
-  0%, 100% { transform: scale(1); }
-  45% { transform: scale(1.03); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.03);
+  }
 }
 
 @keyframes grimoirePageTurn {
@@ -1159,8 +1190,24 @@ img {
   }
 }
 
+@keyframes outcomeBannerEnter {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -54%) rotate(-3.4deg) scale(0.92);
+  }
+  65% {
+    opacity: 1;
+    transform: translate(-50%, -49%) rotate(-1.6deg) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(-2.2deg) scale(1);
+  }
+}
+
 @keyframes summonBeam {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(-50%) scaleY(0.92);
     opacity: 0.18;
   }
@@ -1171,7 +1218,8 @@ img {
 }
 
 @keyframes slotInvocationPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.28;
     transform: scale(0.98);
   }
@@ -1214,7 +1262,12 @@ img {
   border: 2px solid rgba(255, 226, 171, 0.22);
   background:
     linear-gradient(180deg, rgba(255, 245, 215, 0.12), rgba(0, 0, 0, 0.28)),
-    linear-gradient(155deg, color-mix(in srgb, var(--card-primary) 68%, #18130f), #231d1b 45%, #0f1217 100%);
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--card-primary) 68%, #18130f),
+      #231d1b 45%,
+      #0f1217 100%
+    );
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.06),
     0 24px 70px rgba(0, 0, 0, 0.3);
@@ -1226,7 +1279,11 @@ img {
   pointer-events: none;
   background:
     linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.08) 32%, transparent 58%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--card-secondary) 70%, transparent), transparent 38%);
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--card-secondary) 70%, transparent),
+      transparent 38%
+    );
 }
 
 .monster-card__header,
@@ -1289,8 +1346,7 @@ img {
   padding: 12px;
   border-radius: 18px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.16)),
-    rgba(12, 14, 18, 0.54);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.16)), rgba(12, 14, 18, 0.54);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -1299,7 +1355,11 @@ img {
   object-fit: cover;
   border-radius: 12px;
   background:
-    radial-gradient(circle at center, color-mix(in srgb, var(--card-secondary) 40%, #ddd), transparent 30%),
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--card-secondary) 40%, #ddd),
+      transparent 30%
+    ),
     linear-gradient(180deg, color-mix(in srgb, var(--card-primary) 35%, #352a20), #141922);
 }
 
@@ -1310,7 +1370,11 @@ img {
   border-radius: 12px;
   border: 1px dashed rgba(255, 255, 255, 0.16);
   background:
-    radial-gradient(circle at center, color-mix(in srgb, var(--card-secondary) 24%, transparent), transparent 30%),
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--card-secondary) 24%, transparent),
+      transparent 30%
+    ),
     linear-gradient(180deg, color-mix(in srgb, var(--card-primary) 40%, #291d15), #141922);
 }
 
@@ -1364,8 +1428,7 @@ img {
   gap: 12px;
   border-radius: 16px;
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.32), rgba(255, 255, 255, 0.04)),
-    rgba(11, 13, 16, 0.76);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.32), rgba(255, 255, 255, 0.04)), rgba(11, 13, 16, 0.76);
 }
 
 .monster-card__stats div {
@@ -1401,7 +1464,7 @@ img {
 
 .arena-board--dragging-card::after,
 .arena-board--slot-targeted::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 50%;
   bottom: 96px;
@@ -1409,8 +1472,12 @@ img {
   height: 180px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background:
-    linear-gradient(180deg, rgba(255, 238, 190, 0), rgba(255, 219, 145, 0.72), rgba(255, 238, 190, 0));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 238, 190, 0),
+    rgba(255, 219, 145, 0.72),
+    rgba(255, 238, 190, 0)
+  );
   filter: blur(10px);
   opacity: 0;
   pointer-events: none;
@@ -1483,7 +1550,7 @@ img {
   display: flex;
   justify-content: center;
   align-items: stretch;
-  min-height: 620px;
+  min-height: calc(var(--battle-card-width) * 1.458);
   position: relative;
 }
 
@@ -1496,7 +1563,7 @@ img {
 }
 
 .battlefield__slot--drop-active::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 12px;
   border-radius: 20px;
@@ -1507,7 +1574,7 @@ img {
 
 .battlefield__slot-placeholder {
   width: var(--battle-card-width);
-  min-height: 620px;
+  min-height: calc(var(--battle-card-width) * 1.458);
   padding: 0;
   appearance: none;
   font-size: 0.92rem;
@@ -1515,15 +1582,18 @@ img {
 }
 
 .battlefield__slot-placeholder--droppable {
-  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    background 140ms ease,
+    box-shadow 140ms ease;
 }
 
 .battlefield__slot-placeholder--droppable:hover,
 .battlefield__slot-placeholder--active {
   border-color: rgba(255, 214, 122, 0.46);
   background:
-    linear-gradient(180deg, rgba(255, 230, 168, 0.1), rgba(0, 0, 0, 0.08)),
-    rgba(10, 14, 19, 0.65);
+    linear-gradient(180deg, rgba(255, 230, 168, 0.1), rgba(0, 0, 0, 0.08)), rgba(10, 14, 19, 0.65);
   box-shadow: 0 0 0 2px rgba(255, 214, 122, 0.15);
   transform: translateY(-2px);
 }
@@ -1532,9 +1602,9 @@ img {
   display: flex;
   flex-direction: column;
   width: var(--battle-card-width);
-  min-height: 620px;
+  min-height: calc(var(--battle-card-width) * 1.458);
   height: 100%;
-  aspect-ratio: auto;
+  aspect-ratio: 59 / 86;
   border-radius: 20px;
 }
 
@@ -1547,141 +1617,171 @@ img {
 }
 
 .battle-card__header {
-  padding: 12px 12px 0;
+  padding: 10px 10px 0;
 }
 
 .battle-card__header span {
-  font-size: 0.72rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
 }
 
 .battle-card__header strong {
-  font-size: 1.08rem;
+  font-size: 0.88rem;
+  line-height: 1.08;
 }
 
 .battle-card__cost {
-  width: 34px;
-  height: 34px;
-  font-size: 1rem;
+  position: relative;
+  width: 32px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #d9a7ff, #7f42d8);
+  border-radius: 50% 50% 58% 58% / 62% 62% 42% 42%;
+  transform: rotate(180deg);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 8px 18px rgba(77, 32, 136, 0.28);
+}
+
+.battle-card__cost::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(180deg, #d9a7ff, #7f42d8);
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 4px 0;
+}
+
+.battle-card__cost span {
+  position: relative;
+  z-index: 1;
+  color: #fcf4ff;
+  font-size: 0.88rem;
+  font-weight: 900;
+  transform: rotate(180deg);
 }
 
 .battle-card__meta {
-  gap: 8px;
-  padding: 8px 12px 0;
+  gap: 6px;
+  padding: 7px 10px 0;
 }
 
 .battle-card__meta span {
-  min-height: 28px;
-  padding: 0 8px;
-  font-size: 0.67rem;
+  min-height: 24px;
+  padding: 0 7px;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
 }
 
 .battle-card__art {
-  padding: 10px 12px 0;
+  padding: 8px 10px 0;
 }
 
 .battle-card__art-frame {
-  aspect-ratio: 1 / 1.08;
-  padding: 8px;
-  border-radius: 14px;
+  aspect-ratio: 1 / 0.96;
+  padding: 6px;
+  border-radius: 12px;
 }
 
 .battle-card__art img {
   aspect-ratio: auto;
-  object-fit: cover;
-  object-position: center 16%;
-  border-radius: 10px;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
   background:
-    radial-gradient(circle at center, color-mix(in srgb, var(--card-secondary) 28%, rgba(255, 255, 255, 0.18)), transparent 45%),
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--card-secondary) 28%, rgba(255, 255, 255, 0.18)),
+      transparent 45%
+    ),
     rgba(20, 24, 29, 0.82);
 }
 
 .battle-card__placeholder {
-  border-radius: 10px;
-  font-size: 0.88rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
 }
 
 .battle-card__body {
   flex: 1;
   display: grid;
   grid-template-rows: auto auto 1fr;
-  gap: 8px;
-  padding: 10px 12px 12px;
+  gap: 6px;
+  padding: 8px 10px 10px;
 }
 
 .battle-card__title-box {
-  gap: 4px;
+  gap: 0;
   margin-bottom: 0;
-  padding: 9px 10px;
-  border-radius: 12px;
-  min-height: 84px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  min-height: 42px;
 }
 
 .battle-card__title-box strong {
-  font-size: 0.84rem;
-}
-
-.battle-card__title-box span {
-  font-size: 0.66rem;
-  line-height: 1.35;
+  font-size: 0.68rem;
+  line-height: 1.2;
 }
 
 .battle-card__stats {
-  padding: 9px 10px;
-  font-size: 0.76rem;
-  gap: 8px;
+  padding: 7px 8px;
+  font-size: 0.62rem;
+  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .battle-card__ability {
   margin: 0;
-  min-height: 128px;
-  padding: 10px;
-  border-radius: 12px;
+  min-height: 84px;
+  padding: 8px;
+  border-radius: 10px;
   background: rgba(7, 10, 14, 0.52);
-  font-size: 0.76rem;
-  line-height: 1.38;
+  font-size: 0.61rem;
+  line-height: 1.26;
 }
 
 .battle-card__ability strong {
-  font-size: 0.84rem;
+  font-size: 0.68rem;
+  line-height: 1.15;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__header strong {
-  font-size: 1.14rem;
+  font-size: 0.88rem;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__header span,
 .battle-card:not(.battle-card--hand) .battle-card__meta span {
-  font-size: 0.72rem;
+  font-size: 0.55rem;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__cost {
-  width: 38px;
-  height: 38px;
-  font-size: 1.06rem;
+  width: 32px;
+  height: 40px;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__art-frame {
-  aspect-ratio: 1 / 0.94;
+  aspect-ratio: 1 / 0.96;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__title-box strong {
-  font-size: 0.92rem;
-}
-
-.battle-card:not(.battle-card--hand) .battle-card__title-box span {
-  font-size: 0.73rem;
+  font-size: 0.68rem;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__stats {
-  font-size: 0.84rem;
+  font-size: 0.62rem;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__ability {
-  font-size: 0.84rem;
+  font-size: 0.61rem;
 }
 
 .battle-card:not(.battle-card--hand) .battle-card__ability strong {
-  font-size: 0.92rem;
+  font-size: 0.68rem;
 }
 
 .battle-card__footer {
@@ -1700,6 +1800,13 @@ img {
   align-items: center;
 }
 
+.hand-command-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .hand-command-bar__hint {
   color: #dbcbaa;
   font-size: 1rem;
@@ -1713,8 +1820,7 @@ img {
   border: 1px solid var(--surface-border);
   border-radius: 22px;
   background:
-    linear-gradient(135deg, rgba(255, 221, 168, 0.06), rgba(48, 72, 105, 0.08)),
-    var(--surface);
+    linear-gradient(135deg, rgba(255, 221, 168, 0.06), rgba(48, 72, 105, 0.08)), var(--surface);
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.22);
 }
 
@@ -1760,7 +1866,9 @@ img {
   background: transparent;
   border-radius: 18px;
   cursor: pointer;
-  transition: transform 160ms ease, filter 160ms ease;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
 }
 
 .practice-lab-card:hover {
@@ -1786,12 +1894,580 @@ img {
 .summon-chooser--practice {
   border-color: rgba(198, 153, 255, 0.2);
   background:
-    linear-gradient(135deg, rgba(195, 145, 255, 0.07), rgba(48, 72, 105, 0.08)),
-    var(--surface);
+    linear-gradient(135deg, rgba(195, 145, 255, 0.07), rgba(48, 72, 105, 0.08)), var(--surface);
+}
+
+.practice-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(5, 8, 13, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.practice-modal {
+  width: min(1480px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  padding: 26px;
+  border: 1px solid rgba(229, 210, 175, 0.14);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top, rgba(203, 155, 88, 0.1), transparent 28%),
+    linear-gradient(180deg, rgba(14, 18, 25, 0.98), rgba(10, 14, 20, 0.98));
+  box-shadow: 0 36px 100px rgba(0, 0, 0, 0.38);
+}
+
+.practice-modal__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.practice-modal__header h3 {
+  margin: 8px 0 10px;
+  font-size: 1.5rem;
+}
+
+.practice-modal__header p:last-child {
+  margin: 0;
+  color: #d7c7a7;
+  line-height: 1.6;
+  max-width: 78ch;
+}
+
+.practice-lab-grid--modal {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.practice-lab-card--modal {
+  border-radius: 24px;
+}
+
+.practice-lab-card--modal .battle-card {
+  width: 100%;
+}
+
+.practice-lab-card--modal .battle-card--hand {
+  width: 100%;
+  min-height: calc(220px * 1.458);
+}
+
+.battle-outcome-banner {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 90;
+  width: min(980px, calc(100vw - 40px));
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-2.2deg);
+  animation: outcomeBannerEnter 420ms cubic-bezier(0.2, 0.84, 0.24, 1.08);
+}
+
+.battle-outcome-banner__inner {
+  padding: 24px 34px;
+  border: 1px solid rgba(255, 239, 209, 0.22);
+  border-radius: 24px;
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 26px 70px rgba(0, 0, 0, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.battle-outcome-banner__tag {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255, 240, 209, 0.84);
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.battle-outcome-banner strong {
+  display: block;
+  font-size: clamp(2.3rem, 5vw, 4rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.battle-outcome-banner p {
+  margin: 10px 0 0;
+  color: rgba(255, 244, 223, 0.92);
+  font-size: clamp(1rem, 2vw, 1.26rem);
+  line-height: 1.45;
+}
+
+.battle-outcome-banner--victory .battle-outcome-banner__inner {
+  background:
+    linear-gradient(135deg, rgba(255, 223, 143, 0.26), rgba(134, 88, 22, 0.22)),
+    linear-gradient(180deg, rgba(33, 26, 16, 0.94), rgba(18, 15, 12, 0.96));
+}
+
+.battle-outcome-banner--victory strong {
+  color: #ffe8aa;
+  text-shadow: 0 0 20px rgba(255, 205, 95, 0.24);
+}
+
+.battle-outcome-banner--defeat .battle-outcome-banner__inner {
+  background:
+    linear-gradient(135deg, rgba(190, 64, 69, 0.3), rgba(72, 21, 24, 0.24)),
+    linear-gradient(180deg, rgba(30, 16, 17, 0.95), rgba(16, 12, 13, 0.97));
+}
+
+.battle-outcome-banner--defeat strong {
+  color: #ffb3ae;
+  text-shadow: 0 0 20px rgba(200, 64, 71, 0.22);
+}
+
+.battle-outcome-banner--neutral .battle-outcome-banner__inner {
+  background:
+    linear-gradient(135deg, rgba(130, 166, 219, 0.22), rgba(50, 74, 119, 0.22)),
+    linear-gradient(180deg, rgba(18, 21, 27, 0.95), rgba(11, 14, 19, 0.96));
+}
+
+.battle-outcome-banner--neutral strong {
+  color: #d7e5ff;
+  text-shadow: 0 0 18px rgba(108, 146, 202, 0.18);
+}
+
+/* TCG Card System */
+
+.battle-card,
+.monster-card--tcg {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 231, 183, 0.24);
+  background:
+    linear-gradient(180deg, rgba(255, 248, 227, 0.12), rgba(9, 11, 16, 0.18)),
+    linear-gradient(160deg, color-mix(in srgb, var(--card-primary) 54%, #231913), #171c23 70%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 14px 30px rgba(0, 0, 0, 0.28);
+}
+
+.battle-card {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  width: var(--battle-card-width);
+  min-height: calc(var(--battle-card-width) * 1.458);
+  height: 100%;
+  aspect-ratio: 59 / 86;
+  border-radius: 18px;
+}
+
+.battle-card--reserve {
+  width: var(--reserve-card-width);
+  min-height: calc(var(--reserve-card-width) * 1.458);
+}
+
+.battle-card--hand {
+  width: var(--hand-card-width);
+  min-height: calc(var(--hand-card-width) * 1.458);
+}
+
+.battle-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 10px 0;
+}
+
+.battle-card__header span {
+  display: block;
+  color: rgba(253, 242, 214, 0.74);
+  font-size: 0.54rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.battle-card__header strong {
+  display: block;
+  margin-top: 3px;
+  color: #fff3d6;
+  font-size: 0.82rem;
+  line-height: 1.1;
+}
+
+.battle-card__cost,
+.monster-card__cost {
+  position: relative;
+  width: 32px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #d9a7ff, #7f42d8);
+  border-radius: 50% 50% 58% 58% / 62% 62% 42% 42%;
+  transform: rotate(180deg);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 8px 18px rgba(77, 32, 136, 0.28);
+  flex-shrink: 0;
+}
+
+.battle-card__cost::after,
+.monster-card__cost::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(180deg, #d9a7ff, #7f42d8);
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 4px 0;
+}
+
+.battle-card__cost span,
+.monster-card__cost span {
+  position: relative;
+  z-index: 1;
+  color: #fcf4ff;
+  font-size: 0.86rem;
+  font-weight: 900;
+  transform: rotate(180deg);
+}
+
+.battle-card__meta {
+  display: flex;
+  gap: 6px;
+  padding: 7px 10px 0;
+}
+
+.battle-card__meta span {
+  flex: 1;
+  min-height: 23px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(6, 9, 13, 0.48);
+  color: rgba(249, 236, 209, 0.84);
+  font-size: 0.53rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.battle-card__art {
+  padding: 8px 10px 0;
+}
+
+.battle-card__art-frame {
+  width: 100%;
+  aspect-ratio: 1.26 / 1;
+  padding: 6px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 235, 200, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.1)), rgba(12, 16, 21, 0.82);
+}
+
+.battle-card__art img,
+.monster-card__art--tcg img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
+  background:
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--card-secondary) 28%, rgba(255, 255, 255, 0.16)),
+      transparent 45%
+    ),
+    rgba(18, 23, 29, 0.92);
+}
+
+.battle-card__placeholder,
+.monster-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 235, 200, 0.16);
+  background:
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--card-secondary) 20%, transparent),
+      transparent 48%
+    ),
+    rgba(17, 20, 26, 0.9);
+  text-align: center;
+}
+
+.battle-card__placeholder span,
+.monster-card__placeholder span {
+  color: rgba(241, 233, 220, 0.78);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.battle-card__body {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: 6px;
+  min-height: 0;
+  padding: 8px 10px 10px;
+}
+
+.battle-card__title-box,
+.monster-card__title-box {
+  display: grid;
+  gap: 3px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 226, 0.09), rgba(20, 17, 16, 0.16)),
+    rgba(9, 11, 15, 0.46);
+}
+
+.battle-card__title-box strong {
+  color: #fff4d8;
+  font-size: 0.67rem;
+  line-height: 1.18;
+}
+
+.battle-card__effect-box,
+.monster-card__effect-box {
+  min-height: 0;
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 230, 0.05), rgba(10, 12, 16, 0.15)),
+    rgba(7, 10, 14, 0.58);
+  overflow: auto;
+}
+
+.battle-card__effect-copy,
+.monster-card__effect-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.battle-card__effect-copy label,
+.monster-card__effect-copy label {
+  color: #f0d28d;
+  font-size: 0.52rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.battle-card__effect-copy p,
+.monster-card__effect-copy p {
+  margin: 0;
+  color: #f0e6d5;
+  font-size: 0.6rem;
+  line-height: 1.25;
+}
+
+.battle-card__contract,
+.monster-card__contract {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.battle-card__contract span,
+.monster-card__contract span {
+  flex: 1 1 auto;
+  min-height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #efe4cd;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.battle-card__stats,
+.monster-card__stats--tcg {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  padding: 8px;
+  border-radius: 10px;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(255, 255, 255, 0.04)), rgba(8, 10, 14, 0.72);
+}
+
+.battle-card__stats span,
+.monster-card__stats--tcg span {
+  min-height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #f7eddc;
+  font-size: 0.61rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.battle-card__footer {
+  padding: 0 10px 10px;
+}
+
+.battle-card__actions button {
+  min-height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f7eedc;
+  font-size: 0.64rem;
+  font-weight: 800;
+}
+
+.monster-card--tcg {
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto auto;
+  width: min(100%, 360px);
+  min-height: 720px;
+  margin: 0 auto;
+  padding: 18px;
+  border-radius: 24px;
+}
+
+.monster-card--tcg .monster-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.monster-card--tcg .monster-card__eyebrow {
+  margin: 0;
+  color: #e2b56d;
+}
+
+.monster-card--tcg h2 {
+  margin: 8px 0 0;
+  font-size: 1.34rem;
+  line-height: 1.05;
+}
+
+.monster-card__meta-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.monster-card__meta-row span {
+  flex: 1;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(7, 10, 14, 0.5);
+  color: rgba(249, 236, 209, 0.84);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.monster-card__art--tcg {
+  margin: 14px 0 0;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.14)), rgba(12, 14, 18, 0.6);
+}
+
+.monster-card__art--tcg img,
+.monster-card__art--tcg .monster-card__placeholder {
+  aspect-ratio: 1.26 / 1;
+}
+
+.monster-card__title-box {
+  margin-top: 14px;
+}
+
+.monster-card__title-box strong {
+  color: #fff4d8;
+  font-size: 0.96rem;
+  line-height: 1.2;
+}
+
+.monster-card__effect-box {
+  margin-top: 12px;
+  min-height: 210px;
+}
+
+.monster-card__effect-copy p {
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.monster-card__effect-copy--flavor p {
+  color: #d7c7a7;
+  font-style: italic;
+}
+
+.monster-card__contract {
+  margin-top: 12px;
+}
+
+.monster-card__stats--tcg {
+  margin-top: 14px;
+}
+
+.monster-card__stats--tcg div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.monster-card__stats--tcg span {
+  color: #c4b698;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+}
+
+.monster-card__stats--tcg strong {
+  font-size: 1.08rem;
+}
+
+.battle-card__effect-box::-webkit-scrollbar,
+.monster-card__effect-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.battle-card__effect-box::-webkit-scrollbar-thumb,
+.monster-card__effect-box::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 145, 0.28);
+  border-radius: 999px;
 }
 
 .hand-panel {
-  min-height: 680px;
+  min-height: 720px;
   overflow: visible;
 }
 
@@ -1841,10 +2517,16 @@ img {
 }
 
 .hand-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 232px), 1fr));
-  gap: 20px;
-  align-items: start;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: 480px;
+  padding: 42px clamp(18px, 4vw, 82px) 16px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 205, 151, 0.24) transparent;
+  isolation: isolate;
 }
 
 .hand-card-slot {
@@ -1854,12 +2536,30 @@ img {
   min-width: 0;
   cursor: grab;
   border-radius: 24px;
-  transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
+  margin-inline: -26px;
+  transform-origin: center 92%;
+  transform: translateX(var(--hand-translate-x, 0px)) translateY(var(--hand-lift, 0px))
+    rotate(var(--hand-rotation, 0deg));
+  z-index: var(--hand-z-index, 1);
+  transition:
+    transform 220ms ease,
+    filter 180ms ease,
+    box-shadow 180ms ease,
+    z-index 180ms ease;
+  will-change: transform;
 }
 
 .hand-card-slot:hover {
-  transform: translateY(-4px);
+  z-index: var(--hand-hover-z-index, 50);
+  transform: translateX(var(--hand-translate-x, 0px)) translateY(calc(var(--hand-lift, 0px) - 56px))
+    rotate(calc(var(--hand-rotation, 0deg) * 0.28)) scale(1.06);
   filter: brightness(1.03);
+}
+
+.hand-card-slot:focus-within {
+  z-index: var(--hand-hover-z-index, 50);
+  transform: translateX(var(--hand-translate-x, 0px)) translateY(calc(var(--hand-lift, 0px) - 48px))
+    rotate(calc(var(--hand-rotation, 0deg) * 0.35)) scale(1.04);
 }
 
 .hand-card-slot:active {
@@ -1867,32 +2567,38 @@ img {
 }
 
 .battle-card--hand {
-  width: min(100%, var(--hand-card-width));
-  min-height: 620px;
-  aspect-ratio: auto;
+  width: var(--hand-card-width);
+  min-height: calc(var(--hand-card-width) * 1.458);
+  aspect-ratio: 59 / 86;
 }
 
-.battle-card--hand[draggable="true"] {
+.battle-card--hand.battle-card--selected {
+  box-shadow:
+    0 0 0 2px rgba(255, 227, 143, 0.5),
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.battle-card--hand[draggable='true'] {
   cursor: grab;
 }
 
-.battle-card--hand[draggable="true"]:active {
+.battle-card--hand[draggable='true']:active {
   cursor: grabbing;
 }
 
 .battle-card--hand .battle-card__header strong {
-  font-size: 1.18rem;
+  font-size: 0.88rem;
 }
 
 .battle-card--hand .battle-card__header span,
 .battle-card--hand .battle-card__meta span {
-  font-size: 0.73rem;
+  font-size: 0.55rem;
 }
 
 .battle-card--hand .battle-card__cost {
-  width: 38px;
-  height: 38px;
-  font-size: 1.08rem;
+  width: 32px;
+  height: 40px;
 }
 
 .battle-card--hand .battle-card__art-frame {
@@ -1900,28 +2606,24 @@ img {
 }
 
 .battle-card--hand .battle-card__title-box {
-  min-height: 78px;
+  min-height: 42px;
 }
 
 .battle-card--hand .battle-card__title-box strong {
-  font-size: 0.9rem;
-}
-
-.battle-card--hand .battle-card__title-box span {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
 }
 
 .battle-card--hand .battle-card__stats {
-  font-size: 0.82rem;
+  font-size: 0.62rem;
 }
 
 .battle-card--hand .battle-card__ability {
-  min-height: 122px;
-  font-size: 0.84rem;
+  min-height: 84px;
+  font-size: 0.61rem;
 }
 
 .battle-card--hand .battle-card__ability strong {
-  font-size: 0.92rem;
+  font-size: 0.68rem;
 }
 
 .summon-chooser {
@@ -2010,9 +2712,19 @@ img {
   .opponent-hand-panel__header,
   .hand-panel__header,
   .hand-command-bar,
-  .summon-chooser {
+  .summon-chooser,
+  .practice-modal__header {
     flex-direction: column;
     align-items: start;
+  }
+
+  .hand-command-bar__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .hand-command-bar__actions > button {
+    width: 100%;
   }
 
   .battlefield__grid {
@@ -2034,8 +2746,628 @@ img {
     grid-template-columns: repeat(2, minmax(0, 108px));
   }
 
-  .hand-card-grid,
   .opponent-hand-strip {
     gap: 10px;
+  }
+
+  .hand-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), max-content));
+    gap: 12px;
+    min-height: auto;
+    padding: 0;
+    overflow: visible;
+    justify-content: center;
+    align-items: start;
+  }
+
+  .hand-card-slot {
+    margin-inline: 0;
+    transform: none;
+    z-index: auto;
+  }
+
+  .hand-card-slot:hover,
+  .hand-card-slot:focus-within {
+    transform: translateY(-6px) scale(1.01);
+  }
+
+  .practice-modal {
+    width: min(100vw - 20px, 980px);
+    max-height: calc(100vh - 20px);
+    padding: 18px;
+  }
+
+  .practice-lab-grid--modal {
+    grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+    gap: 14px;
+  }
+}
+
+/* Final TCG battle card contract */
+
+.battle-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto auto 1fr auto auto;
+  width: var(--battle-card-width);
+  min-height: calc(var(--battle-card-width) * 1.458);
+  aspect-ratio: 59 / 86;
+  height: auto;
+  padding: 8px 10px 9px;
+  border-radius: 17px;
+  overflow: visible;
+  border: 1px solid rgba(255, 236, 200, 0.28);
+  background:
+    linear-gradient(180deg, rgba(255, 248, 227, 0.14), rgba(12, 11, 16, 0.16)),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--card-primary) 30%, #34251c),
+      color-mix(in srgb, var(--card-secondary) 18%, #171b22)
+    );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 12px 26px rgba(0, 0, 0, 0.26);
+}
+
+.battle-card--hand {
+  width: var(--hand-card-width);
+  min-height: calc(var(--hand-card-width) * 1.458);
+}
+
+.battle-card--reserve {
+  width: var(--reserve-card-width);
+  min-height: calc(var(--reserve-card-width) * 1.458);
+}
+
+.battle-card__frame-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.08) 34%, transparent 60%),
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--card-secondary) 36%, transparent),
+      transparent 40%
+    );
+}
+
+.battle-card__superline {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 18px;
+  color: rgba(255, 243, 215, 0.82);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.battle-card__headline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+  margin-top: 5px;
+}
+
+.battle-card__headline strong {
+  color: #fff3d5;
+  font-size: 0.92rem;
+  line-height: 1.08;
+}
+
+.battle-card__mana-orb {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 242, 214, 0.2);
+  background: rgba(8, 11, 16, 0.5);
+  color: #f7edda;
+  font-size: 0.82rem;
+  font-weight: 900;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.battle-card__art-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px;
+  gap: 8px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+
+.battle-card__art-shell {
+  position: relative;
+  min-height: 142px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 239, 208, 0.14);
+  background: transparent;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.battle-card__image,
+.battle-card__placeholder {
+  width: 100%;
+  height: 100%;
+}
+
+.battle-card__image {
+  object-fit: cover;
+  object-position: center;
+  background: transparent;
+}
+
+.battle-card__placeholder {
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 235, 200, 0.15);
+  background: rgba(18, 22, 28, 0.2);
+  text-align: center;
+}
+
+.battle-card__placeholder span {
+  color: rgba(241, 233, 220, 0.78);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.battle-card__stance-badge {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  min-height: 20px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #fff4dd;
+  font-size: 0.55rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.battle-card__stance-badge--attack {
+  background: rgba(168, 67, 49, 0.78);
+}
+
+.battle-card__stance-badge--defense {
+  background: rgba(58, 93, 141, 0.78);
+}
+
+.battle-card__stars {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  padding-top: 2px;
+  color: #f0c66c;
+  text-shadow: 0 0 10px rgba(240, 198, 108, 0.18);
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.battle-card__star-placeholder {
+  color: rgba(255, 244, 220, 0.32);
+}
+
+.battle-card__divider {
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 239, 208, 0.2);
+}
+
+.battle-card__effect-box {
+  min-height: 88px;
+  margin-top: 8px;
+  padding: 0;
+  background: transparent;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+.battle-card__ability-name {
+  display: block;
+  color: #fff0ce;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.battle-card__ability-text {
+  margin: 6px 0 0;
+  color: #efe4cf;
+  font-size: 0.59rem;
+  line-height: 1.22;
+  overflow: hidden;
+}
+
+.battle-card__stats-footer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 239, 208, 0.2);
+}
+
+.battle-card__stats-footer span {
+  color: #fff0d7;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.battle-card--token {
+  border-color: rgba(255, 255, 255, 0.74);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(229, 223, 212, 0.97)),
+    linear-gradient(180deg, #faf8f2, #ded8cc);
+}
+
+.battle-card--token .battle-card__superline,
+.battle-card--token .battle-card__headline strong,
+.battle-card--token .battle-card__ability-name,
+.battle-card--token .battle-card__ability-text,
+.battle-card--token .battle-card__stats-footer span {
+  color: #2d2923;
+}
+
+.battle-card--token .battle-card__mana-orb {
+  color: #332d26;
+  background: rgba(255, 255, 255, 0.74);
+  border-color: rgba(81, 72, 58, 0.16);
+}
+
+.battle-card--hand .battle-card__headline strong,
+.battle-card:not(.battle-card--hand) .battle-card__headline strong {
+  font-size: 0.92rem;
+}
+
+.battlefield__grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, var(--battle-card-width)));
+  justify-content: center;
+  gap: 18px;
+  min-height: 430px;
+  align-items: start;
+}
+
+.battlefield__slot {
+  display: flex;
+  justify-content: center;
+  min-height: 384px;
+}
+
+.battlefield__card-stack {
+  width: var(--battle-card-width);
+  display: grid;
+  gap: 8px;
+}
+
+.battlefield__interaction-bar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 233, 194, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 248, 227, 0.05), rgba(9, 11, 16, 0.16)),
+    rgba(11, 15, 21, 0.84);
+}
+
+.battlefield__interaction-bar--single {
+  grid-template-columns: 1fr;
+}
+
+.battlefield__interaction-bar button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f7eedc;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.battlefield__interaction-bar button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.battlefield__slot-placeholder {
+  width: var(--battle-card-width);
+  min-height: 320px;
+}
+
+.practice-lab-card--modal .battle-card--hand {
+  width: 100%;
+  min-height: calc(220px * 1.458);
+}
+
+@media (max-width: 720px) {
+  .battle-card,
+  .battle-card--hand {
+    width: 150px;
+    min-height: calc(150px * 1.458);
+  }
+
+  .battlefield__grid {
+    grid-template-columns: repeat(2, minmax(0, 150px));
+    min-height: auto;
+  }
+
+  .battlefield__card-stack,
+  .battlefield__slot-placeholder {
+    width: 150px;
+  }
+
+  .battlefield__slot {
+    min-height: 344px;
+  }
+
+  .battlefield__interaction-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-card__art-shell {
+    min-height: 118px;
+  }
+
+  .battle-card__side-stat {
+    padding: 3px 3px 2px;
+  }
+
+  .battle-card__side-stat strong {
+    font-size: 0.46rem;
+  }
+
+  .battle-card__ability-text {
+    font-size: 0.56rem;
+  }
+}
+
+/* 1:1 art tuning */
+
+.battle-card__superline {
+  min-height: 12px;
+  gap: 3px;
+  font-size: 0.49rem;
+  letter-spacing: 0.08em;
+}
+
+.battle-card__headline {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin-top: 1px;
+  padding-right: 10px;
+}
+
+.battle-card__headline strong {
+  font-size: 0.82rem;
+  line-height: 1.02;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.battle-card__mana-orb {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 242, 214, 0.22);
+  background:
+    linear-gradient(180deg, rgba(36, 40, 49, 0.92), rgba(13, 16, 22, 0.96)), rgba(10, 12, 16, 0.92);
+  box-shadow:
+    0 0 0 4px rgba(0, 0, 0, 1),
+    0 4px 12px rgba(0, 0, 0, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  font-size: 0.76rem;
+  z-index: 3;
+}
+
+.battle-card__art-row {
+  margin-top: 2px;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.battle-card__art-shell {
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+}
+
+.battle-card__side-stats {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  min-height: 0;
+}
+
+.battle-card__side-stat {
+  min-height: 0;
+  padding: 4px 3px 3px;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 227, 0.06), rgba(12, 11, 16, 0.14)),
+    rgba(10, 13, 18, 0.52);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+}
+
+.battle-card__side-stat--divider {
+  border-top: 1px solid rgba(255, 239, 208, 0.16);
+}
+
+.battle-card__side-stat span {
+  display: block;
+  color: rgba(255, 237, 203, 0.72);
+  font-size: 0.43rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.battle-card__side-stat strong {
+  display: block;
+  margin-top: 3px;
+  color: #fff0d7;
+  font-size: 0.49rem;
+  font-weight: 900;
+  line-height: 1.04;
+  white-space: pre-line;
+  word-break: break-word;
+  text-align: left;
+}
+
+.battle-card__divider {
+  margin-top: 3px;
+}
+
+.battle-card__effect-box {
+  height: 78px;
+  min-height: 78px;
+  max-height: 78px;
+  margin-top: 3px;
+  padding: 5px 6px 6px;
+  border: 1px solid rgba(255, 239, 208, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 227, 0.06), rgba(12, 11, 16, 0.14)),
+    rgba(10, 13, 18, 0.56);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.battle-card__ability-name {
+  font-size: 0.68rem;
+  line-height: 1.08;
+}
+
+.battle-card__ability-text {
+  margin-top: 2px;
+  font-size: 0.56rem;
+  line-height: 1.16;
+  white-space: pre-line;
+}
+
+.battle-card__effect-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.battle-card__effect-box::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 145, 0.28);
+  border-radius: 999px;
+}
+
+.battle-card__stats-footer {
+  margin-top: 6px;
+  padding-top: 6px;
+}
+
+.battle-card__stats-footer span {
+  font-size: 0.58rem;
+}
+
+.battle-card--hand .battle-card__headline strong,
+.battle-card:not(.battle-card--hand) .battle-card__headline strong {
+  font-size: 0.82rem;
+}
+
+@media (max-width: 720px) {
+  .battle-card__headline {
+    padding-right: 8px;
+  }
+
+  .battle-card__headline strong {
+    font-size: 0.76rem;
+  }
+
+  .battle-card__mana-orb {
+    top: -17px;
+    right: -17px;
+    width: 25px;
+    height: 25px;
+    font-size: 0.7rem;
+  }
+
+  .battle-card__superline {
+    font-size: 0.44rem;
+  }
+}
+
+/* Elixir cost number only */
+
+.battle-card {
+  overflow: hidden;
+}
+
+.battle-card__frame-glow {
+  border-radius: inherit;
+}
+
+.battle-card__mana-orb,
+.battle-card--token .battle-card__mana-orb {
+  position: absolute;
+  top: 3px;
+  right: 9px;
+  min-width: 14px;
+  min-height: 14px;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.42),
+    rgba(0, 0, 0, 0.12) 72%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 12px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.42);
+  color: #f7edda;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.72),
+    0 0 7px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 720px) {
+  .battle-card__mana-orb,
+  .battle-card--token .battle-card__mana-orb {
+    top: 3px;
+    right: 8px;
+    min-width: 13px;
+    min-height: 13px;
+    width: 13px;
+    height: 13px;
+    font-size: 0.66rem;
   }
 }

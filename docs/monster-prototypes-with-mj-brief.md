@@ -49,8 +49,8 @@ mj_visual_brief:
   faction_or_origin: Arsenal da Garganta Trovejante, Boca de Ferrum
   role_or_battlefield_identity: siege dragon, brutal executioner, frontline artillery beast
   visual_concept: >
-    A heavily armored dragon with cannon-like jaws and bronze rib plating engraved with combustion runes.
-    Its chest burns like a sealed furnace, with internal fire leaking through cracked seams in the armor.
+    A heavily armored dragon with cannon-like jaws and bronze rib plating engraved with combustion blue fire runes.
+    Its chest burns like a sealed blue furnace, with internal blue fire leaking through cracked seams in the armor.
     The creature should stand in an aggressive forward posture, built like a living siege weapon.
     Its silhouette must feel massive, ancient, and explosive.
   scene: >
@@ -79,7 +79,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 2. Cartomante do Fio Nulo
@@ -143,7 +143,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 3. Cervo de Aurivau
@@ -207,7 +207,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 4. Midas, o Áureo
@@ -274,7 +274,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: "--ar 5:7 --v 6 --style raw --q 2"
+  midjourney_params: "--ar 1:1 --v 6 --style raw --q 2"
 ```
 
 ### 5. Irma da Vela Oca
@@ -338,7 +338,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 5. Feral de Serelune
@@ -402,7 +402,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 6. Bobo do Nono Rasgo
@@ -466,7 +466,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 7. Corista de Odris
@@ -530,7 +530,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 8. Mastim da Forja Muda
@@ -594,7 +594,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 9. Viuva do Espelho Cego
@@ -658,7 +658,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 10. Cavaleiro do Veio Partido
@@ -722,7 +722,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 11. Corvo da Lapide Sem Nome
@@ -786,7 +786,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 12. Prior do Fogo Afogado
@@ -850,7 +850,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 13. Rastejante de Geodo
@@ -914,7 +914,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 14. Duquista Sem Face
@@ -978,7 +978,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 15. Astrarca do Cimo Partido
@@ -1042,7 +1042,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 16. Canhoneiro de Ferrum
@@ -1106,7 +1106,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 17. Guarda-Luto de Serelune
@@ -1170,7 +1170,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 18. Abadesa da Conta Partida
@@ -1234,7 +1234,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 19. Arquiteto do Selo Submerso
@@ -1298,7 +1298,7 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```
 
 ### 20. Reina do Coral Carbonico
@@ -1362,5 +1362,5 @@ mj_visual_brief:
     - no extra characters
     - no text inside the art
     - no random clutter that damages readability
-  midjourney_params: '--ar 5:7 --v 6 --style raw --q 2'
+  midjourney_params: '--ar 1:1 --v 6 --style raw --q 2'
 ```

@@ -1,109 +1,146 @@
-﻿# Card Standard
+# Card Standard
 
-## Goal
+## Objetivo
 
-This document defines the structural standard that all Southpaw cards must follow, both in catalogue view and in live battle view.
+Este documento define o padrao estrutural que todas as cartas de Southpaw devem seguir, tanto no catalogo quanto dentro da batalha.
 
-## Shared card identity
+## Identidade compartilhada da carta
 
-Every card should preserve these base elements:
+Toda carta deve preservar estes elementos base:
 
-- dominant color accents from the monster palette
-- premium frame presentation
-- strong type hierarchy
-- visible cost
-- visible combat stats
-- dedicated ability space
-- level as the main visible progression marker
+- acentos de cor dominantes vindos da paleta do monstro
+- moldura premium
+- hierarquia tipografica forte
+- custo visivel
+- status de combate visiveis
+- area dedicada para habilidade
+- `level` como marcador principal de progressao
 
-`level` is the current gameplay-facing progression value.
+`level` e o valor de progressao relevante para o jogo neste momento.
 
-`rarity` is deferred for future productization and should not drive balance or visual hierarchy decisions right now.
+`rarity` fica adiado para uma fase futura do produto e nao deve guiar balanceamento nem hierarquia visual agora.
 
-## Catalogue card standard
+## Padrao fisico de referencia
 
-The catalogue card is the showcase version:
+A carta fisica de referencia segue o tamanho classico de TCG:
 
-- richer presentation
-- larger art window
-- expanded descriptive space
-- decorative frame details
+- `59 mm x 86 mm`
+- proporcao aproximada de `59:86`
 
-This version exists for browsing, collection feel, and monster presentation.
+Esse padrao serve para a moldura completa da carta.
 
-## Battle card standard
+## Padrao definitivo da carta de batalha
 
-The battle card is the competitive version:
+A carta usada em mao, campo e selecoes compactas deve seguir exatamente esta anatomia:
 
-- compact portrait format
-- shared template for field, hand, and compact previews
-- fixed ratio close to `5:7`
-- art window scaled to show more of the monster
-- no uncontrolled stretching to fill entire columns
-- information prioritized for quick decisions
-- footprint close to a physical TCG card so the board remains visible without scroll
+1. Linha superior:
+   `{card_type} | {attribute}`
 
-### Required zones
+2. Cabecalho principal:
+   `{name}        {mana_cost}`
 
-1. Top identity bar
-   Includes type, name, level, and cost.
+3. Bloco de arte:
+   `{image}        {level}`
 
-2. Art frame
-   Must prioritize the monster silhouette and reduce dead margins. The current duel template accepts tighter framing so the creature occupies more of the visible card area.
+4. Divisor visual:
+   linha no estilo de TCG/Yu-Gi-Oh
 
-3. Stat line
-   Displays HP, ATK, DEF, and AGI clearly.
+5. Bloco de efeito:
+   `{ability_name}`
+   `{ability_text}`
 
-4. Ability strip
-   Shows ability name and a compact effect summary.
+6. Divisor visual:
+   linha no estilo de TCG/Yu-Gi-Oh
 
-5. Action area
-   Contains battle actions and must stay outside the art frame.
+7. Rodape:
+   `HP {health} | ATK {attack} | DEF {defense} | AGI {agility}`
 
-## Arena placement standard
+## Regras visuais obrigatorias da arte
 
-- The board is the primary stage of the battle page.
-- Personal panels should stay on the side so the table remains central.
-- Secondary logs or room details should stay outside the main board.
-- Card slots should remain visually consistent even when only one card is present.
-- One summoned card must never enlarge enough to dominate the whole row.
-- Slot layout should be based on fixed card bounds rather than oversized fluid blocks.
-- All relevant duel information should remain visible without forcing vertical scroll on common desktop resolutions.
-- The player hand should reuse the same battle-card family in a larger, more legible hand variant.
-- The opponent hand should appear as facedown TCG-style cards with count visibility.
-- Summoning should begin from the hand and resolve through a clear `ATK` / `DEF` decision step.
+- a arte do monstro nao deve seguir a proporcao da carta inteira
+- a arte deve ser produzida para a janela de imagem da carta
+- a imagem precisa preencher visualmente todo o quadro de arte
+- nao deve sobrar bloco cinza escuro de preenchimento ao redor do monstro
+- o `level` deve aparecer em estrelas, na vertical, ao lado da imagem
+- o custo de elixir deve ser uma bolinha discreta com o numero
 
-## Hand card standard
+## Tamanho oficial da imagem do monstro
 
-The hand card is the most readable version inside the duel:
+Para o layout atual do Southpaw, a arte precisa seguir este padrao:
 
-- larger than the field card
-- same TCG ratio as the battlefield template
-- strong art presence for quick recognition
-- enough width to display title, cost, stats, and ability header without crowding
-- suitable for drag-and-drop interaction into the field
+- proporcao ideal da arte: `1.08:1`
+- tamanho ideal: `1200 x 1110 px`
+- alternativa premium: `1400 x 1295 px`
+- minimo aceitavel: `900 x 830 px`
+- safe area recomendada: `8%` em cada borda
 
-## Future creation checklist
+### Como compor a imagem
 
-When creating a new card, always define:
+- o monstro deve ficar centralizado
+- partes importantes nao devem encostar nas bordas
+- cabeca, armas, asas, chifres e maos devem permanecer dentro da safe area
+- o fundo pode se expandir mais, mas o assunto principal nao deve depender da borda para leitura
+
+## Regra para Midjourney e outros geradores
+
+Quando a ferramenta aceitar proporcao e nao tamanho exato:
+
+- usar proporcao alvo equivalente a `1.08:1`
+- no Midjourney, usar como aproximacao `--ar 11:10`
+
+Quando a ferramenta aceitar resolucao exata:
+
+- preferir `1200 x 1110 px`
+
+## Padrao da carta no campo
+
+- a carta no campo deve usar o mesmo layout da carta na mao
+- a mesma estrutura visual deve refletir na mao, no campo e em selecoes compactas
+- o layout da carta deve ser modularizado em um unico componente visual
+- as acoes da carta no campo nao devem ficar dentro da carta
+
+## Area de interacao no campo
+
+Abaixo da carta em campo deve existir uma caixa separada contendo:
+
+- `Atacar`
+- `Hab. {valor elixir}`
+- `Alterar Posicao`
+
+Isso reduz a altura irreal da carta no campo e preserva o molde TCG.
+
+## Padrao de posicionamento da arena
+
+- a mesa e o elemento principal da tela
+- os paineis pessoais devem ficar nas laterais
+- logs e informacoes secundarias devem ficar fora do nucleo da mesa
+- os slots precisam manter largura e altura consistentes
+- uma unica carta nunca deve crescer a ponto de dominar a linha inteira
+- a mao do jogador reutiliza a mesma familia visual da carta de batalha
+- a mao adversaria aparece como cartas viradas para baixo com contagem visivel
+
+## Checklist para criacao futura
+
+Toda nova carta deve definir:
 
 - slug
 - name
 - title
 - attribute
-- type
+- card_type
 - level
-- cost
+- mana_cost
 - attack
 - defense
 - health
 - agility
-- ability name
-- ability short text
-- primary color
-- secondary color
-- image path
+- ability_name
+- ability_text
+- primary_color
+- secondary_color
+- image_path
+- padrao de arte em `1200 x 1110 px` ou proporcao equivalente
 
-## UX rule
+## Regra de UX
 
-If a design choice makes the board less legible during play, prioritize gameplay readability over decorative detail.
+Se uma decisao visual prejudicar a leitura da mesa durante a partida, a legibilidade do jogo tem prioridade sobre detalhe decorativo.

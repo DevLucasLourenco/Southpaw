@@ -39,7 +39,6 @@ class Monster(Base):
             "title": self.title,
             "attribute": self.attribute,
             "mana_cost": self.mana_cost,
-            "agility": self.agility,
             "rarity": self.rarity,
             "ability_elixir_cost": self.ability_elixir_cost,
             "ability_limit_scope": self.ability_limit_scope,
