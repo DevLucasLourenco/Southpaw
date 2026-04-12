@@ -8,8 +8,8 @@ router = APIRouter(prefix="/battle", tags=["battle"])
 
 
 @router.post("/rooms", response_model=CreateRoomResponse)
-def create_room(_: CreateRoomRequest) -> CreateRoomResponse:
-    room = battle_manager.create_room()
+def create_room(payload: CreateRoomRequest) -> CreateRoomResponse:
+    room = battle_manager.create_room(payload.mode)
     return CreateRoomResponse(room_id=room.room_id, join_path=f"/?room={room.room_id}")
 
 
@@ -29,4 +29,3 @@ async def battle_websocket(websocket: WebSocket, room_id: str, name: str = "Duel
             await battle_manager.process_action(room_id, connection, data)
     except WebSocketDisconnect:
         await battle_manager.disconnect(room_id, connection.connection_id)
-

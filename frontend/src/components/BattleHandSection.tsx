@@ -1,4 +1,4 @@
-import type { Monster } from "../features/monsters/types";
+﻿import type { Monster } from "../features/monsters/types";
 import { BattleCard } from "./BattleCard";
 
 type BattleHandSectionProps = {
@@ -10,6 +10,8 @@ type BattleHandSectionProps = {
   onCardDragEnd: () => void;
   onCardClick: (slug: string) => void;
 };
+
+const HAND_DRAG_DATA_KEY = "text/southpaw-card-slug";
 
 export function BattleHandSection({
   title,
@@ -32,19 +34,18 @@ export function BattleHandSection({
 
       <div className="hand-card-grid">
         {cards.map((monster) => (
-          <div
-            key={monster.slug}
-            className="hand-card-slot"
-            draggable={isActiveTurn}
-            onDragStart={(event) => {
-              event.dataTransfer.effectAllowed = "move";
-              event.dataTransfer.setData("text/southpaw-card-slug", monster.slug);
-              onCardDragStart(monster.slug);
-            }}
-            onDragEnd={onCardDragEnd}
-          >
+          <div key={monster.slug} className="hand-card-slot">
             <BattleCard
               variant="hand"
+              draggable={isActiveTurn}
+              onDragStart={(event) => {
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.dropEffect = "move";
+                event.dataTransfer.setData(HAND_DRAG_DATA_KEY, monster.slug);
+                event.dataTransfer.setData("text/plain", monster.slug);
+                onCardDragStart(monster.slug);
+              }}
+              onDragEnd={() => onCardDragEnd()}
               card={{
                 slug: monster.slug,
                 name: monster.name,

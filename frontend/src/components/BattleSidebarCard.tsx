@@ -4,6 +4,7 @@ type BattleSidebarCardProps = {
   title: string;
   player: BattlePlayerState | null;
   maxFieldSize: number;
+  isTimed: boolean;
   isActive: boolean;
   isViewer: boolean;
   isDamaged: boolean;
@@ -23,6 +24,7 @@ export function BattleSidebarCard({
   title,
   player,
   maxFieldSize,
+  isTimed,
   isActive,
   isViewer,
   isDamaged,
@@ -72,7 +74,7 @@ export function BattleSidebarCard({
 
         <div className="player-sidebar-card__metric">
           <span>Tempo</span>
-          <strong>{formatClock(player?.time_remaining_ms ?? 0)}</strong>
+          <strong>{isTimed ? formatClock(player?.time_remaining_ms ?? 0) : "Livre"}</strong>
         </div>
 
         <div className="player-sidebar-card__metric">

@@ -16,6 +16,7 @@ from app.services.monster_service import MonsterService
 
 Seat = Literal["player_one", "player_two"]
 Role = Literal["player", "spectator"]
+RoomMode = Literal["pvp", "practice_bot"]
 CardPosition = Literal["attack", "defense"]
 MAX_FIELD_SIZE = 5
 INITIAL_ELIXIR = 10
@@ -72,6 +73,7 @@ class MonsterTemplate:
 class RuntimeCard:
     instance_id: str
     owner_seat: Seat
+    slot_index: int
     slug: str
     name: str
     title: str
@@ -120,6 +122,7 @@ class RuntimeCard:
         return {
             "instance_id": self.instance_id,
             "owner_seat": self.owner_seat,
+            "slot_index": self.slot_index,
             "slug": self.slug,
             "name": self.name,
             "title": self.title,
@@ -170,6 +173,7 @@ class RuntimeCard:
         return cls(
             instance_id=data["instance_id"],
             owner_seat=data["owner_seat"],
+            slot_index=data.get("slot_index", 0),
             slug=data["slug"],
             name=data["name"],
             title=data["title"],
@@ -243,7 +247,7 @@ class ParticipantState:
             "draw_pile": list(self.draw_pile),
             "draw_pile_count": len(self.draw_pile),
             "hand_count": len(self.hand),
-            "battlefield": [card.serialize() for card in self.battlefield],
+            "battlefield": [card.serialize() for card in sorted(self.battlefield, key=lambda card: card.slot_index)],
             "graveyard": list(self.graveyard),
         }
 
@@ -273,8 +277,15 @@ class ConnectionState:
 
 
 class BattleRoom:
-    def __init__(self, room_id: str, templates: list[MonsterTemplate], state: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        room_id: str,
+        templates: list[MonsterTemplate],
+        state: dict[str, Any] | None = None,
+        room_mode: RoomMode = "pvp",
+    ):
         self.room_id = room_id
+        self.room_mode: RoomMode = room_mode
         self.templates = {template.slug: template for template in templates}
         self.template_order = [template.slug for template in templates]
         self.connections: dict[str, ConnectionState] = {}
@@ -292,8 +303,10 @@ class BattleRoom:
 
         if state:
             self._load_state(state)
+        self.ensure_practice_bot()
 
     def _load_state(self, state: dict[str, Any]) -> None:
+        self.room_mode = state.get("room_mode", self.room_mode)
         self.started = state.get("started", False)
         self.completed = state.get("completed", False)
         self.round_number = state.get("round_number", 1)
@@ -357,7 +370,23 @@ class BattleRoom:
         self._reset_participant_collection(participant)
         return participant
 
+    def is_practice_mode(self) -> bool:
+        return self.room_mode == "practice_bot"
+
+    def ensure_practice_bot(self) -> None:
+        if not self.is_practice_mode():
+            return
+        if self.players["player_two"] is None:
+            bot = self.create_participant("player_two", "Automato de Treino")
+            bot.connected = True
+            self.players["player_two"] = bot
+
     def available_or_reclaimable_seat(self) -> Seat | None:
+        if self.is_practice_mode():
+            participant = self.players["player_one"]
+            if participant is None or not participant.connected:
+                return "player_one"
+            return None
         for seat in ("player_one", "player_two"):
             participant = self.players[seat]
             if participant is None or not participant.connected:
@@ -393,6 +422,8 @@ class BattleRoom:
         return sum(1 for connection in self.connections.values() if connection.role == "spectator")
 
     def both_players_ready(self) -> bool:
+        if self.is_practice_mode():
+            return self.players["player_one"] is not None and self.players["player_two"] is not None
         return all(self.players[seat] is not None and self.players[seat].connected for seat in ("player_one", "player_two"))
 
     def start_match(self) -> None:
@@ -588,7 +619,7 @@ class BattleRoom:
         for card in participant.battlefield:
             self._refresh_card_turn_state(card)
         self.active_seat = seat
-        self.active_turn_started_at = time.monotonic()
+        self.active_turn_started_at = None if self.is_practice_mode() else time.monotonic()
         self._set_last_action(
             {
                 "kind": "turn_start",
@@ -602,6 +633,8 @@ class BattleRoom:
         )
 
     def sync_clock(self) -> None:
+        if self.is_practice_mode():
+            return
         if self.completed or not self.started or not self.active_seat or self.active_turn_started_at is None:
             return
 
@@ -632,6 +665,7 @@ class BattleRoom:
         self.sync_clock()
         return {
             "room_id": self.room_id,
+            "mode": self.room_mode,
             "started": self.started,
             "completed": self.completed,
             "round_number": self.round_number,
@@ -652,6 +686,7 @@ class BattleRoom:
                 "display_name": connection.display_name if connection else None,
             },
             "rules": {
+                "timed": not self.is_practice_mode(),
                 "field_size": MAX_FIELD_SIZE,
                 "turn_increment_ms": TURN_INCREMENT_MS,
                 "initial_timer_ms": INITIAL_TIMER_MS,
@@ -663,6 +698,7 @@ class BattleRoom:
     def snapshot_state(self) -> dict[str, Any]:
         self.sync_clock()
         return {
+            "room_mode": self.room_mode,
             "started": self.started,
             "completed": self.completed,
             "round_number": self.round_number,
@@ -681,6 +717,7 @@ class BattleRoom:
     def room_summary(self) -> dict[str, Any]:
         return {
             "room_id": self.room_id,
+            "mode": self.room_mode,
             "started": self.started,
             "completed": self.completed,
             "round_number": self.round_number,
@@ -695,11 +732,12 @@ class BattleRoom:
             ],
         }
 
-    def _build_runtime_card(self, seat: Seat, slug: str) -> RuntimeCard:
+    def _build_runtime_card(self, seat: Seat, slug: str, slot_index: int) -> RuntimeCard:
         template = self.templates[slug]
         return RuntimeCard(
             instance_id=uuid.uuid4().hex[:10],
             owner_seat=seat,
+            slot_index=slot_index,
             slug=template.slug,
             name=template.name,
             title=template.title,
@@ -743,6 +781,7 @@ class BattleRoom:
         agility: int,
         image_path: str,
         token_kind: str,
+        slot_index: int,
         token_origin_slug: str | None = None,
         attribute: str = "Token",
         level: int = 1,
@@ -751,6 +790,7 @@ class BattleRoom:
         card = RuntimeCard(
             instance_id=uuid.uuid4().hex[:10],
             owner_seat=seat,
+            slot_index=slot_index,
             slug=f"token-{token_kind}-{uuid.uuid4().hex[:6]}",
             name=name,
             title=title,
@@ -802,6 +842,22 @@ class BattleRoom:
                 return card
         return None
 
+    def _validate_slot_index(self, slot_index: int) -> None:
+        if slot_index < 0 or slot_index >= MAX_FIELD_SIZE:
+            raise ValueError("Escolha uma zona valida do campo.")
+
+    def _find_card_in_slot(self, participant: ParticipantState, slot_index: int) -> RuntimeCard | None:
+        for card in participant.battlefield:
+            if card.slot_index == slot_index:
+                return card
+        return None
+
+    def _find_first_open_slot(self, participant: ParticipantState) -> int | None:
+        for slot_index in range(MAX_FIELD_SIZE):
+            if self._find_card_in_slot(participant, slot_index) is None:
+                return slot_index
+        return None
+
     def _spawn_scaled_clone(
         self,
         participant: ParticipantState,
@@ -809,6 +865,10 @@ class BattleRoom:
         scale: float,
         clone_title: str,
     ) -> RuntimeCard:
+        slot_index = self._find_first_open_slot(participant)
+        if slot_index is None:
+            raise ValueError("Nao ha espaco livre no campo para invocar o token.")
+
         clone = self._build_token_card(
             card.owner_seat,
             name=card.name,
@@ -821,6 +881,7 @@ class BattleRoom:
             agility=max(1, int(card.agility * scale)),
             image_path=card.image_path,
             token_kind="clone",
+            slot_index=slot_index,
             token_origin_slug=card.slug,
             attribute=card.attribute,
             level=max(1, card.level),
@@ -905,6 +966,13 @@ class BattleRoom:
             raise ValueError("Player not found.")
 
         self._clear_expired_modifiers(self.turn_number)
+        if self.is_practice_mode():
+            self.turn_number += 1
+            self.round_number += 1
+            self.add_log(f"{participant.display_name} encerrou o turno de treino.")
+            self.start_turn(seat)
+            return
+
         participant.time_remaining_ms += TURN_INCREMENT_MS
         next_seat = self.get_opponent_seat(seat)
         if next_seat == "player_one":
@@ -913,7 +981,7 @@ class BattleRoom:
         self.add_log(f"{participant.display_name} ended the turn and gained +10s.")
         self.start_turn(next_seat)
 
-    def summon(self, seat: Seat, slug: str, position: CardPosition = "attack") -> None:
+    def summon(self, seat: Seat, slug: str, position: CardPosition = "attack", slot_index: int | None = None) -> None:
         self.sync_clock()
         if self.completed or seat != self.active_seat:
             raise ValueError("You cannot summon right now.")
@@ -926,10 +994,17 @@ class BattleRoom:
             raise ValueError("Not enough elixir.")
         if len(participant.battlefield) >= MAX_FIELD_SIZE:
             raise ValueError("Your battlefield is full.")
+        if slot_index is None:
+            slot_index = self._find_first_open_slot(participant)
+        if slot_index is None:
+            raise ValueError("Seu campo esta cheio.")
+        self._validate_slot_index(slot_index)
+        if self._find_card_in_slot(participant, slot_index):
+            raise ValueError("Essa zona do campo ja esta ocupada.")
 
         participant.elixir -= self.templates[slug].mana_cost
         participant.hand.remove(slug)
-        card = self._build_runtime_card(seat, slug)
+        card = self._build_runtime_card(seat, slug, slot_index)
         card.can_change_position = False
         self._set_card_position(card, position)
         card.can_attack = position == "attack" and self.turn_number > 1
@@ -941,6 +1016,7 @@ class BattleRoom:
                 "seat": seat,
                 "card_id": card.instance_id,
                 "summoned_card_id": card.instance_id,
+                "slot_index": slot_index,
                 "position": position,
                 "damaged_seats": [],
                 "damaged_card_ids": [],
@@ -949,7 +1025,77 @@ class BattleRoom:
                 "elixir_spent_seat": seat,
             }
         )
-        self.add_log(f"{participant.display_name} summoned {card.name} in {position} position.")
+        self.add_log(f"{participant.display_name} summoned {card.name} in zona {slot_index + 1} em {position}.")
+
+    def practice_spawn_enemy_card(self, seat: Seat, slug: str, position: CardPosition, slot_index: int) -> None:
+        self.sync_clock()
+        if not self.is_practice_mode():
+            raise ValueError("Esta acao so esta disponivel no modo treino.")
+        if seat != "player_one":
+            raise ValueError("Apenas o duelista de treino pode configurar o campo inimigo.")
+        opponent = self.players["player_two"]
+        if not opponent:
+            raise ValueError("O robo de treino nao esta disponivel.")
+        self._validate_slot_index(slot_index)
+        if self._find_card_in_slot(opponent, slot_index):
+            raise ValueError("Essa zona do campo inimigo ja esta ocupada.")
+        if len(opponent.battlefield) >= MAX_FIELD_SIZE:
+            raise ValueError("O campo inimigo ja esta cheio.")
+        if slug not in self.templates:
+            raise ValueError("Carta invalida para treino.")
+
+        card = self._build_runtime_card("player_two", slug, slot_index)
+        self._set_card_position(card, position)
+        card.can_attack = False
+        card.can_use_ability = False
+        card.can_change_position = False
+        opponent.battlefield.append(card)
+        self._set_last_action(
+            {
+                "kind": "practice_spawn_enemy",
+                "seat": seat,
+                "card_id": card.instance_id,
+                "summoned_card_id": card.instance_id,
+                "slot_index": slot_index,
+                "position": position,
+                "damaged_seats": [],
+                "damaged_card_ids": [],
+                "destroyed_card_ids": [],
+                "elixir_spent": 0,
+                "elixir_spent_seat": None,
+            }
+        )
+        self.add_log(f"Campo de treino: {card.name} foi posicionado na zona {slot_index + 1} do inimigo.")
+
+    def practice_remove_enemy_card(self, seat: Seat, card_id: str) -> None:
+        self.sync_clock()
+        if not self.is_practice_mode():
+            raise ValueError("Esta acao so esta disponivel no modo treino.")
+        if seat != "player_one":
+            raise ValueError("Apenas o duelista de treino pode editar o campo inimigo.")
+        opponent = self.players["player_two"]
+        if not opponent:
+            raise ValueError("O robo de treino nao esta disponivel.")
+
+        card = self._get_card("player_two", card_id)
+        if not card:
+            raise ValueError("Carta inimiga nao encontrada.")
+
+        opponent.battlefield = [enemy_card for enemy_card in opponent.battlefield if enemy_card.instance_id != card_id]
+        self._set_last_action(
+            {
+                "kind": "practice_remove_enemy",
+                "seat": seat,
+                "card_id": card_id,
+                "target_id": card_id,
+                "damaged_seats": [],
+                "damaged_card_ids": [],
+                "destroyed_card_ids": [card_id],
+                "elixir_spent": 0,
+                "elixir_spent_seat": None,
+            }
+        )
+        self.add_log(f"Campo de treino: {card.name} foi removido do lado inimigo.")
 
     def attack(self, seat: Seat, attacker_id: str, target_type: str, target_id: str | None = None) -> None:
         self.sync_clock()
@@ -1167,7 +1313,11 @@ class BattleRoom:
     def process_action(self, seat: Seat, action: dict[str, Any]) -> None:
         action_type = action.get("type")
         if action_type == "summon":
-            self.summon(seat, action["slug"], action.get("position", "attack"))
+            self.summon(seat, action["slug"], action.get("position", "attack"), action.get("slot_index"))
+        elif action_type == "practice_spawn_enemy":
+            self.practice_spawn_enemy_card(seat, action["slug"], action.get("position", "attack"), action["slot_index"])
+        elif action_type == "practice_remove_enemy":
+            self.practice_remove_enemy_card(seat, action["card_id"])
         elif action_type == "attack":
             self.attack(seat, action["attacker_id"], action["target_type"], action.get("target_id"))
         elif action_type == "change_position":
@@ -1246,15 +1396,20 @@ class BattleRoomManager:
             return room
         record = self._load_record(room_id)
         state = record.state if record else None
-        room = BattleRoom(room_id=room_id, templates=self._load_templates(), state=state)
+        room = BattleRoom(
+            room_id=room_id,
+            templates=self._load_templates(),
+            state=state,
+            room_mode=state.get("room_mode", "pvp") if state else "pvp",
+        )
         self.rooms[room_id] = room
         if record is None:
             self._save_room(room)
         return room
 
-    def create_room(self) -> BattleRoom:
+    def create_room(self, mode: RoomMode = "pvp") -> BattleRoom:
         room_id = _generate_room_id()
-        room = BattleRoom(room_id=room_id, templates=self._load_templates())
+        room = BattleRoom(room_id=room_id, templates=self._load_templates(), room_mode=mode)
         self.rooms[room_id] = room
         self._save_room(room)
         return room

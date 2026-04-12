@@ -103,10 +103,10 @@ function App() {
   const grimoirePages = useMemo(() => parseGrimoirePages(worldLoreMarkdown), []);
   const currentGrimoirePage = grimoirePages[grimoirePageIndex] ?? null;
 
-  async function handleCreateRoom(displayName: string) {
+  async function handleCreateRoom(displayName: string, mode: "pvp" | "practice_bot") {
     setCreatingRoom(true);
     try {
-      await createBattleRoom(displayName);
+      await createBattleRoom(displayName, mode);
       window.location.reload();
     } finally {
       setCreatingRoom(false);

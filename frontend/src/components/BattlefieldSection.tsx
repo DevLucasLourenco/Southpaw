@@ -27,15 +27,17 @@ type BattlefieldSectionProps = {
   onSelectAttack?: (cardId: string) => void;
   onSelectAbility?: (card: RuntimeBattleCard) => void;
   onChangePosition?: (card: RuntimeBattleCard) => void;
+  onPracticeRemoveEnemyCard?: (card: RuntimeBattleCard) => void;
   isDropEnabled?: boolean;
-  isDropActive?: boolean;
-  onFieldDragOver?: () => void;
-  onFieldDragLeave?: () => void;
-  onFieldDrop?: (event: DragEvent<HTMLElement>) => void;
+  activeDropSlot?: number | null;
+  onSlotDragEnter?: (slotIndex: number) => void;
+  onSlotDragLeave?: () => void;
+  onSlotDrop?: (slotIndex: number, event: DragEvent<HTMLElement>) => void;
+  onEmptySlotClick?: (slotIndex: number) => void;
 };
 
 function buildSlots(cards: RuntimeBattleCard[], slotCount: number) {
-  return Array.from({ length: slotCount }, (_, index) => cards[index] ?? null);
+  return Array.from({ length: slotCount }, (_, index) => cards.find((card) => card.slot_index === index) ?? null);
 }
 
 export function BattlefieldSection({
@@ -60,39 +62,22 @@ export function BattlefieldSection({
   onSelectAttack,
   onSelectAbility,
   onChangePosition,
+  onPracticeRemoveEnemyCard,
   isDropEnabled = false,
-  isDropActive = false,
-  onFieldDragOver,
-  onFieldDragLeave,
-  onFieldDrop,
+  activeDropSlot = null,
+  onSlotDragEnter,
+  onSlotDragLeave,
+  onSlotDrop,
+  onEmptySlotClick,
 }: BattlefieldSectionProps) {
   const slots = buildSlots(cards, slotCount);
 
   return (
-    <section
-      className={["battlefield", isDropActive ? "battlefield--drop-active" : ""].join(" ")}
-      onDragOver={
-        isDropEnabled
-          ? (event) => {
-              event.preventDefault();
-              onFieldDragOver?.();
-            }
-          : undefined
-      }
-      onDragLeave={isDropEnabled ? () => onFieldDragLeave?.() : undefined}
-      onDrop={
-        isDropEnabled
-          ? (event) => {
-              event.preventDefault();
-              onFieldDrop?.(event);
-            }
-          : undefined
-      }
-    >
+    <section className={["battlefield", activeDropSlot !== null ? "battlefield--drop-active" : ""].join(" ")}>
       <h3>{title}</h3>
       {isDropEnabled ? (
-        <div className={["battlefield__drop-hint", isDropActive ? "battlefield__drop-hint--active" : ""].join(" ")}>
-          Solte uma carta da mao aqui para invocar
+        <div className={["battlefield__drop-hint", activeDropSlot !== null ? "battlefield__drop-hint--active" : ""].join(" ")}>
+          Solte a carta sobre uma zona vazia para escolher onde invocar
         </div>
       ) : null}
       <div className="battlefield__grid">
@@ -100,9 +85,46 @@ export function BattlefieldSection({
           const ghost = ghosts[`slot-${index}`];
           const displayCard = card ?? ghost ?? null;
           const isGhost = !card && Boolean(ghost);
+          const isSlotDroppable = isDropEnabled && !card;
+          const isSlotDropActive = activeDropSlot === index;
 
           return (
-            <div key={`slot-${title}-${index}`} className="battlefield__slot">
+            <div
+              key={`slot-${title}-${index}`}
+              className={[
+                "battlefield__slot",
+                isSlotDroppable ? "battlefield__slot--droppable" : "",
+                isSlotDropActive ? "battlefield__slot--drop-active" : "",
+              ].join(" ")}
+              onDragOver={
+                isSlotDroppable
+                  ? (event) => {
+                      event.preventDefault();
+                      event.dataTransfer.dropEffect = "move";
+                      onSlotDragEnter?.(index);
+                    }
+                  : undefined
+              }
+              onDragEnter={isSlotDroppable ? () => onSlotDragEnter?.(index) : undefined}
+              onDragLeave={
+                isSlotDroppable
+                  ? (event) => {
+                      if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                        return;
+                      }
+                      onSlotDragLeave?.();
+                    }
+                  : undefined
+              }
+              onDrop={
+                isSlotDroppable
+                  ? (event) => {
+                      event.preventDefault();
+                      onSlotDrop?.(index, event);
+                    }
+                  : undefined
+              }
+            >
               {displayCard ? (
                 <BattleCard
                   card={displayCard}
@@ -162,13 +184,32 @@ export function BattlefieldSection({
                           {card.position === "attack" ? "DEF" : "ATK"}
                         </button>
                       </div>
+                    ) : card && onPracticeRemoveEnemyCard && viewerRole === "player" ? (
+                      <div className="battle-card__actions">
+                        <button
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            onPracticeRemoveEnemyCard(card);
+                          }}
+                        >
+                          Remover
+                        </button>
+                      </div>
                     ) : null
                   }
                 />
               ) : (
-                <div className="battlefield__slot-placeholder">
+                <button
+                  type="button"
+                  className={[
+                    "battlefield__slot-placeholder",
+                    isSlotDroppable ? "battlefield__slot-placeholder--droppable" : "",
+                    isSlotDropActive ? "battlefield__slot-placeholder--active" : "",
+                  ].join(" ")}
+                  onClick={onEmptySlotClick ? () => onEmptySlotClick(index) : undefined}
+                >
                   <span>Zona {index + 1}</span>
-                </div>
+                </button>
               )}
             </div>
           );

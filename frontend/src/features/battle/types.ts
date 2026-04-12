@@ -8,6 +8,7 @@ export type ViewerState = {
 export type RuntimeBattleCard = {
   instance_id: string;
   owner_seat: "player_one" | "player_two";
+  slot_index: number;
   slug: string;
   name: string;
   title: string;
@@ -69,6 +70,7 @@ export type BattlePlayerState = {
 
 export type BattleRoomState = {
   room_id: string;
+  mode: "pvp" | "practice_bot";
   started: boolean;
   completed: boolean;
   round_number: number;
@@ -90,6 +92,7 @@ export type BattleRoomState = {
     target_seat?: string;
     card_id?: string;
     summoned_card_id?: string;
+    slot_index?: number;
     position?: "attack" | "defense";
     seat?: string;
     winner_seat?: string;
@@ -102,6 +105,7 @@ export type BattleRoomState = {
   log: string[];
   viewer: ViewerState;
   rules: {
+    timed: boolean;
     field_size: number;
     turn_increment_ms: number;
     initial_timer_ms: number;

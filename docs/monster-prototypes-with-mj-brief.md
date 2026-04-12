@@ -1074,15 +1074,15 @@ ability_target_mode: 'card'
 
 mj_visual_brief:
   faction_or_origin: Arsenal da Garganta Trovejante, Boca de Ferrum
-  role_or_battlefield_identity: siege veteran, frontline gunner, ritual artillery soldier
+  role_or_battlefield_identity: mecha veteran, frontline gunner, ritual artillery mecha
   visual_concept: >
-    A scarred siege veteran with a bronze cannon assembly fused to one shoulder and a furnace boiler locked into the chest.
+    A scarred siege mecha veteran with a bronze cannon assembly fused to one shoulder and a furnace boiler locked into the chest with blue combustion runes.
     The character should feel practical, disciplined, and made for close artillery execution rather than heroic spectacle.
-    The design must combine human war experience with industrial ritual machinery.
-    Its silhouette should stay readable through the shoulder cannon, armored torso, and aiming stance.
+    The design must combine mecha war experience with industrial ritual machinery.
+    Its silhouette should stay readable through the shoulder cannon, armored torso.
   scene: >
     A war-torn foundry trench with smoking rubble, iron barricades, and distant artillery flashes in a storm of ash.
-    The background should reinforce siege labor and battlefield punishment.
+    The background should reinforce a city in chaos.
   mood:
     - brutal
     - fearsome
@@ -1090,7 +1090,7 @@ mj_visual_brief:
   must_have_details:
     - bronze shoulder cannon
     - chest boiler
-    - scarred veteran armor
+    - mecha design, like lockdown from Transformers, with its cannon on the head and shoulder
     - ash-choked siege trench
   art_direction:
     - portrait-oriented TCG full art

@@ -12,8 +12,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
-    "baseUrl": "./src",
-    "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "6.0",
+    "baseUrl": "./src"
   },
   "include": ["src"]
 }

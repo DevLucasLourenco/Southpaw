@@ -1,4 +1,4 @@
-﻿import { useState, type CSSProperties, type ReactNode } from "react";
+﻿import { useState, type CSSProperties, type DragEventHandler, type ReactNode } from "react";
 
 type BattleCardVisual = {
   slug: string;
@@ -36,7 +36,10 @@ type BattleCardProps = {
   isSummoning?: boolean;
   isDestroyed?: boolean;
   isDamaged?: boolean;
+  draggable?: boolean;
   onClick?: () => void;
+  onDragStart?: DragEventHandler<HTMLElement>;
+  onDragEnd?: DragEventHandler<HTMLElement>;
   footer?: ReactNode;
 };
 
@@ -50,7 +53,10 @@ export function BattleCard({
   isSummoning = false,
   isDestroyed = false,
   isDamaged = false,
+  draggable = false,
   onClick,
+  onDragStart,
+  onDragEnd,
   footer,
 }: BattleCardProps) {
   const [imageHidden, setImageHidden] = useState(false);
@@ -79,7 +85,10 @@ export function BattleCard({
         card.is_token ? "battle-card--token" : "",
       ].join(" ")}
       style={style}
+      draggable={draggable}
       onClick={onClick}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
     >
       <div className="battle-card__frame-glow" />
       <header className="battle-card__header">
@@ -108,6 +117,7 @@ export function BattleCard({
             <img
               src={`http://localhost:8000${card.image_path}`}
               alt={card.name}
+              draggable={false}
               onError={() => setImageHidden(true)}
             />
           )}

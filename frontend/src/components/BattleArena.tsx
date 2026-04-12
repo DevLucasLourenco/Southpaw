@@ -4,6 +4,7 @@ import { API_BASE_WS_URL, apiPost } from "../api/client";
 import type { CreateRoomResponse, BattleRoomState, RuntimeBattleCard } from "../features/battle/types";
 import type { Monster } from "../features/monsters/types";
 import { useMonstersQuery } from "../features/monsters/queries";
+import { BattleCard } from "./BattleCard";
 import { BattleHandSection } from "./BattleHandSection";
 import { BattleSidebarCard } from "./BattleSidebarCard";
 import { BattlefieldSection } from "./BattlefieldSection";
@@ -12,6 +13,8 @@ type BattleArenaProps = {
   roomId: string;
   onLeaveRoom: () => void;
 };
+
+type BattleRoomMode = "pvp" | "practice_bot";
 
 type DestroyedGhostMap = Record<string, RuntimeBattleCard>;
 const DEFAULT_SLOT_COUNT = 5;
@@ -22,7 +25,7 @@ function normalizeName(value: string) {
 }
 
 function buildSlots(cards: RuntimeBattleCard[], slotCount: number) {
-  return Array.from({ length: slotCount }, (_, index) => cards[index] ?? null);
+  return Array.from({ length: slotCount }, (_, index) => cards.find((card) => card.slot_index === index) ?? null);
 }
 
 function buildFacedownCards(count: number) {
@@ -48,8 +51,11 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   const [damagedSeats, setDamagedSeats] = useState<Set<string>>(new Set());
   const [spendingElixirSeat, setSpendingElixirSeat] = useState<string | null>(null);
   const [draggedHandSlug, setDraggedHandSlug] = useState<string | null>(null);
-  const [dropActive, setDropActive] = useState(false);
+  const [activeDropSlot, setActiveDropSlot] = useState<number | null>(null);
   const [pendingSummonSlug, setPendingSummonSlug] = useState<string | null>(null);
+  const [pendingSummonSlotIndex, setPendingSummonSlotIndex] = useState<number | null>(null);
+  const [practiceSelectedSlug, setPracticeSelectedSlug] = useState<string | null>(null);
+  const [practiceTargetSlotIndex, setPracticeTargetSlotIndex] = useState<number | null>(null);
   const prevStateRef = useRef<BattleRoomState | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
@@ -131,6 +137,8 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   const viewerRole = roomState?.viewer.role ?? preferredRole;
   const activeSeat = roomState?.active_seat ?? null;
   const fieldSize = roomState?.rules.field_size ?? DEFAULT_SLOT_COUNT;
+  const isTimedMode = roomState?.rules.timed ?? true;
+  const isPracticeMode = roomState?.mode === "practice_bot";
   const myPlayer = viewerSeat ? roomState?.players[viewerSeat] ?? null : null;
   const topPlayer = viewerSeat === "player_two" ? roomState?.players.player_one ?? null : roomState?.players.player_two ?? null;
   const bottomPlayer = viewerSeat === "player_two" ? roomState?.players.player_two ?? null : roomState?.players.player_one ?? null;
@@ -154,9 +162,14 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
       .map((slug) => monsterMap.get(slug))
       .filter((monster): monster is Monster => Boolean(monster));
   }, [monsterMap, myPlayer?.hand]);
+  const highlightedSlotIndex = activeDropSlot ?? pendingSummonSlotIndex;
   const pendingSummonMonster = useMemo(
     () => (pendingSummonSlug ? monsterMap.get(pendingSummonSlug) ?? null : null),
     [monsterMap, pendingSummonSlug],
+  );
+  const practiceSelectedMonster = useMemo(
+    () => (practiceSelectedSlug ? monsterMap.get(practiceSelectedSlug) ?? null : null),
+    [monsterMap, practiceSelectedSlug],
   );
 
   useEffect(() => {
@@ -227,9 +240,18 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
     setSelectedAbilityCardId(null);
     setSelectedAbilityTargetIds([]);
     setDraggedHandSlug(null);
-    setDropActive(false);
+    setActiveDropSlot(null);
     if (roomState?.last_action?.kind === "summon" || roomState?.last_action?.kind === "turn_start") {
       setPendingSummonSlug(null);
+      setPendingSummonSlotIndex(null);
+    }
+    if (roomState?.last_action?.kind === "practice_spawn_enemy") {
+      setPracticeSelectedSlug(null);
+      setPracticeTargetSlotIndex(null);
+      setActiveDropSlot(null);
+    }
+    if (roomState?.last_action?.kind === "practice_remove_enemy") {
+      setPracticeTargetSlotIndex(null);
     }
   }, [roomState?.last_action?.id]);
 
@@ -260,7 +282,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
     navigator.clipboard.writeText(link);
   }
 
-  function openSummonChooser(slug: string) {
+  function openSummonChooser(slug: string, slotIndex: number | null = null) {
     if (!isMyTurn) {
       return;
     }
@@ -268,16 +290,31 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
     setSelectedAbilityCardId(null);
     setSelectedAbilityTargetIds([]);
     setPendingSummonSlug(slug);
+    setPendingSummonSlotIndex(slotIndex);
+    setActiveDropSlot(slotIndex);
   }
 
   function confirmSummon(position: "attack" | "defense") {
-    if (!pendingSummonSlug) {
+    if (!pendingSummonSlug || pendingSummonSlotIndex === null) {
       return;
     }
-    sendAction({ type: "summon", slug: pendingSummonSlug, position });
+    sendAction({ type: "summon", slug: pendingSummonSlug, position, slot_index: pendingSummonSlotIndex });
     setPendingSummonSlug(null);
+    setPendingSummonSlotIndex(null);
     setDraggedHandSlug(null);
-    setDropActive(false);
+    setActiveDropSlot(null);
+  }
+
+  function confirmPracticeSpawn(position: "attack" | "defense") {
+    if (!practiceSelectedSlug || practiceTargetSlotIndex === null) {
+      return;
+    }
+    sendAction({
+      type: "practice_spawn_enemy",
+      slug: practiceSelectedSlug,
+      position,
+      slot_index: practiceTargetSlotIndex,
+    });
   }
 
   function handleAttackTarget(card: RuntimeBattleCard) {
@@ -422,6 +459,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               title="Duelista superior"
               player={topPlayer}
               maxFieldSize={fieldSize}
+              isTimed={isTimedMode}
               isActive={activeSeat === topPlayer?.seat}
               isViewer={viewerSeat === topPlayer?.seat}
               isDamaged={Boolean(topPlayer?.seat && damagedSeats.has(topPlayer.seat))}
@@ -432,6 +470,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               title="Seu painel"
               player={bottomPlayer}
               maxFieldSize={fieldSize}
+              isTimed={isTimedMode}
               isActive={activeSeat === bottomPlayer?.seat}
               isViewer={viewerSeat === bottomPlayer?.seat}
               isDamaged={Boolean(bottomPlayer?.seat && damagedSeats.has(bottomPlayer.seat))}
@@ -439,7 +478,14 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
             />
           </aside>
 
-          <div className="arena-board arena-board--expanded">
+          <div
+            className={[
+              "arena-board",
+              "arena-board--expanded",
+              draggedHandSlug ? "arena-board--dragging-card" : "",
+              highlightedSlotIndex !== null ? "arena-board--slot-targeted" : "",
+            ].join(" ")}
+          >
             <div className="arena-round arena-round--board arena-round--expanded">
               <span>{viewerRole === "spectator" ? "Modo espectador" : viewerSeat === activeSeat ? "Seu turno" : "Turno adversario"}</span>
               <span>Rodada {roomState.round_number}</span>
@@ -463,6 +509,66 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               </div>
             </section>
 
+            {isPracticeMode ? (
+              <section className="practice-lab-panel">
+                <div className="practice-lab-panel__header">
+                  <div>
+                    <p className="section-tag">Laboratorio do robo</p>
+                    <h3>Escolha cartas para o campo inimigo</h3>
+                  </div>
+                  <span className="practice-lab-panel__status">
+                    {practiceSelectedMonster
+                      ? practiceTargetSlotIndex === null
+                        ? `Carta escolhida: ${practiceSelectedMonster.name}`
+                        : `Zona alvo: ${practiceTargetSlotIndex + 1}`
+                      : "Selecione uma carta para testar"}
+                  </span>
+                </div>
+
+                <div className="practice-lab-grid">
+                  {(monstersQuery.data?.items ?? []).map((monster) => (
+                    <button
+                      key={`practice-${monster.slug}`}
+                      type="button"
+                      className={[
+                        "practice-lab-card",
+                        practiceSelectedSlug === monster.slug ? "practice-lab-card--selected" : "",
+                      ].join(" ")}
+                      onClick={() => {
+                        setPracticeSelectedSlug(monster.slug);
+                        setPracticeTargetSlotIndex(null);
+                        setActiveDropSlot(null);
+                      }}
+                    >
+                      <BattleCard
+                        variant="reserve"
+                        card={{
+                          slug: monster.slug,
+                          name: monster.name,
+                          title: monster.title,
+                          description: monster.description,
+                          card_type: monster.card_type,
+                          attribute: monster.attribute,
+                          level: monster.level,
+                          mana_cost: monster.mana_cost,
+                          primary_color: monster.primary_color,
+                          secondary_color: monster.secondary_color,
+                          image_path: monster.image_path,
+                          ability_name: monster.ability_name,
+                          ability_text: monster.ability_text,
+                          ability_elixir_cost: monster.ability_elixir_cost,
+                          attack: monster.attack,
+                          defense: monster.defense,
+                          agility: monster.agility,
+                          health: monster.health,
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
             <BattlefieldSection
               title={viewerRole === "spectator" ? "Campo superior" : "Campo adversario"}
               cards={topPlayer?.battlefield ?? []}
@@ -482,6 +588,39 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               activeSeat={activeSeat}
               onAttackTarget={handleAttackTarget}
               onAbilityTarget={handleAbilityTarget}
+              onPracticeRemoveEnemyCard={
+                isPracticeMode
+                  ? (card) => {
+                      sendAction({ type: "practice_remove_enemy", card_id: card.instance_id });
+                    }
+                  : undefined
+              }
+              isDropEnabled={isPracticeMode && Boolean(practiceSelectedSlug)}
+              activeDropSlot={isPracticeMode ? activeDropSlot : null}
+              onSlotDragEnter={isPracticeMode ? (slotIndex) => setActiveDropSlot(slotIndex) : undefined}
+              onSlotDragLeave={isPracticeMode ? () => setActiveDropSlot(null) : undefined}
+              onSlotDrop={
+                isPracticeMode
+                  ? (slotIndex) => {
+                      if (!practiceSelectedSlug) {
+                        return;
+                      }
+                      setPracticeTargetSlotIndex(slotIndex);
+                      setActiveDropSlot(slotIndex);
+                    }
+                  : undefined
+              }
+              onEmptySlotClick={
+                isPracticeMode
+                  ? (slotIndex) => {
+                      if (!practiceSelectedSlug) {
+                        return;
+                      }
+                      setPracticeTargetSlotIndex(slotIndex);
+                      setActiveDropSlot(slotIndex);
+                    }
+                  : undefined
+              }
             />
 
             {(topPlayer?.battlefield?.length ?? 0) === 0 && selectedAttacker ? (
@@ -569,17 +708,26 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
                 })
               }
               isDropEnabled={isMyTurn}
-              isDropActive={dropActive}
-              onFieldDragOver={() => setDropActive(true)}
-              onFieldDragLeave={() => setDropActive(false)}
-              onFieldDrop={(event) => {
-                const droppedSlug = event.dataTransfer.getData(HAND_DRAG_DATA_KEY) || draggedHandSlug;
+              activeDropSlot={highlightedSlotIndex}
+              onSlotDragEnter={(slotIndex) => setActiveDropSlot(slotIndex)}
+              onSlotDragLeave={() => setActiveDropSlot(null)}
+              onSlotDrop={(slotIndex, event) => {
+                const droppedSlug =
+                  event.dataTransfer.getData(HAND_DRAG_DATA_KEY) ||
+                  event.dataTransfer.getData("text/plain") ||
+                  draggedHandSlug;
                 if (!droppedSlug) {
                   return;
                 }
-                openSummonChooser(droppedSlug);
-                setDropActive(false);
+                openSummonChooser(droppedSlug, slotIndex);
                 setDraggedHandSlug(null);
+              }}
+              onEmptySlotClick={(slotIndex) => {
+                if (!pendingSummonSlug || !isMyTurn) {
+                  return;
+                }
+                setPendingSummonSlotIndex(slotIndex);
+                setActiveDropSlot(slotIndex);
               }}
             />
 
@@ -588,16 +736,71 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
                 <div className="summon-chooser__copy">
                   <p className="section-tag">Invocacao</p>
                   <h3>{pendingSummonMonster.name}</h3>
-                  <p>Escolha como essa carta entra em campo.</p>
+                  <p>
+                    {pendingSummonSlotIndex === null
+                      ? "Escolha uma zona vazia do seu campo para continuar."
+                      : `Escolha como essa carta entra na zona ${pendingSummonSlotIndex + 1}.`}
+                  </p>
                 </div>
                 <div className="summon-chooser__actions">
-                  <button className="end-turn-button" onClick={() => confirmSummon("attack")}>
+                  <button className="end-turn-button" disabled={pendingSummonSlotIndex === null} onClick={() => confirmSummon("attack")}>
                     Invocar em ATK
                   </button>
-                  <button className="ghost-button summon-chooser__ghost" onClick={() => confirmSummon("defense")}>
+                  <button
+                    className="ghost-button summon-chooser__ghost"
+                    disabled={pendingSummonSlotIndex === null}
+                    onClick={() => confirmSummon("defense")}
+                  >
                     Invocar em DEF
                   </button>
-                  <button className="ghost-button summon-chooser__ghost" onClick={() => setPendingSummonSlug(null)}>
+                  <button
+                    className="ghost-button summon-chooser__ghost"
+                    onClick={() => {
+                      setPendingSummonSlug(null);
+                      setPendingSummonSlotIndex(null);
+                      setActiveDropSlot(null);
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </section>
+            ) : null}
+
+            {isPracticeMode && practiceSelectedMonster ? (
+              <section className="summon-chooser summon-chooser--practice">
+                <div className="summon-chooser__copy">
+                  <p className="section-tag">Treino contra robo</p>
+                  <h3>{practiceSelectedMonster.name}</h3>
+                  <p>
+                    {practiceTargetSlotIndex === null
+                      ? "Escolha uma zona vazia no campo inimigo para posicionar essa carta de teste."
+                      : `Posicione na zona ${practiceTargetSlotIndex + 1} do campo inimigo.`}
+                  </p>
+                </div>
+                <div className="summon-chooser__actions">
+                  <button
+                    className="end-turn-button"
+                    disabled={practiceTargetSlotIndex === null}
+                    onClick={() => confirmPracticeSpawn("attack")}
+                  >
+                    Inserir em ATK
+                  </button>
+                  <button
+                    className="ghost-button summon-chooser__ghost"
+                    disabled={practiceTargetSlotIndex === null}
+                    onClick={() => confirmPracticeSpawn("defense")}
+                  >
+                    Inserir em DEF
+                  </button>
+                  <button
+                    className="ghost-button summon-chooser__ghost"
+                    onClick={() => {
+                      setPracticeSelectedSlug(null);
+                      setPracticeTargetSlotIndex(null);
+                      setActiveDropSlot(null);
+                    }}
+                  >
                     Cancelar
                   </button>
                 </div>
@@ -611,7 +814,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
                 </div>
                 {viewerSeat === activeSeat ? (
                   <button className="end-turn-button" onClick={() => sendAction({ type: "end_turn" })}>
-                    Encerrar turno
+                    {isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
                   </button>
                 ) : null}
               </div>
@@ -626,12 +829,13 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
                 onCardDragStart={(slug) => {
                   setDraggedHandSlug(slug);
                   setPendingSummonSlug(null);
+                  setPendingSummonSlotIndex(null);
                 }}
                 onCardDragEnd={() => {
                   setDraggedHandSlug(null);
-                  setDropActive(false);
+                  setActiveDropSlot(null);
                 }}
-                onCardClick={(slug) => openSummonChooser(slug)}
+                onCardClick={(slug) => openSummonChooser(slug, null)}
               />
             ) : null}
           </div>
@@ -661,7 +865,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
 }
 
 type LandingPageProps = {
-  onCreateRoom: (displayName: string) => void;
+  onCreateRoom: (displayName: string, mode: BattleRoomMode) => void;
 };
 
 export function LandingPage({ onCreateRoom }: LandingPageProps) {
@@ -684,17 +888,21 @@ export function LandingPage({ onCreateRoom }: LandingPageProps) {
           onChange={(event) => setDisplayName(event.target.value)}
           placeholder="Seu nome de duelista"
         />
-        <button className="play-now-button" onClick={() => onCreateRoom(normalizeName(displayName))}>
+        <button className="play-now-button" onClick={() => onCreateRoom(normalizeName(displayName), "pvp")}>
           JOGAR AGORA
+        </button>
+        <button className="ghost-button play-panel__secondary" onClick={() => onCreateRoom(normalizeName(displayName), "practice_bot")}>
+          TREINAR VS ROBO
         </button>
       </div>
     </div>
   );
 }
 
-export async function createBattleRoom(displayName: string): Promise<CreateRoomResponse> {
-  return apiPost<CreateRoomResponse, { preferred_role: "player" }>("/battle/rooms", {
+export async function createBattleRoom(displayName: string, mode: BattleRoomMode = "pvp"): Promise<CreateRoomResponse> {
+  return apiPost<CreateRoomResponse, { preferred_role: "player"; mode: BattleRoomMode }>("/battle/rooms", {
     preferred_role: "player",
+    mode,
   }).then((response) => {
     const params = new URLSearchParams(window.location.search);
     params.set("room", response.room_id);
