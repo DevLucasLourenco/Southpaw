@@ -1,7 +1,8 @@
-import type { DragEvent } from "react";
+import { ArrowLeftRight, Sword } from 'lucide-react';
+import type { DragEvent } from 'react';
 
-import type { RuntimeBattleCard } from "../features/battle/types";
-import { BattleCard } from "./BattleCard";
+import type { RuntimeBattleCard } from '../features/battle/types';
+import { BattleCard } from './BattleCard';
 
 type DestroyedGhostMap = Record<string, RuntimeBattleCard>;
 
@@ -19,9 +20,9 @@ type BattlefieldSectionProps = {
   actionTargetId: string | null;
   summoningCardId: string | null;
   damagedCardIds: Set<string>;
-  viewerRole: "player" | "spectator";
-  viewerSeat: "player_one" | "player_two" | null;
-  activeSeat: "player_one" | "player_two" | null;
+  viewerRole: 'player' | 'spectator';
+  viewerSeat: 'player_one' | 'player_two' | null;
+  activeSeat: 'player_one' | 'player_two' | null;
   onAttackTarget: (card: RuntimeBattleCard) => void;
   onAbilityTarget: (card: RuntimeBattleCard) => void;
   onSelectAttack?: (cardId: string) => void;
@@ -37,7 +38,10 @@ type BattlefieldSectionProps = {
 };
 
 function buildSlots(cards: RuntimeBattleCard[], slotCount: number) {
-  return Array.from({ length: slotCount }, (_, index) => cards.find((card) => card.slot_index === index) ?? null);
+  return Array.from(
+    { length: slotCount },
+    (_, index) => cards.find((card) => card.slot_index === index) ?? null,
+  );
 }
 
 export function BattlefieldSection({
@@ -73,10 +77,19 @@ export function BattlefieldSection({
   const slots = buildSlots(cards, slotCount);
 
   return (
-    <section className={["battlefield", activeDropSlot !== null ? "battlefield--drop-active" : ""].join(" ")}>
+    <section
+      className={['battlefield', activeDropSlot !== null ? 'battlefield--drop-active' : ''].join(
+        ' ',
+      )}
+    >
       <h3>{title}</h3>
       {isDropEnabled ? (
-        <div className={["battlefield__drop-hint", activeDropSlot !== null ? "battlefield__drop-hint--active" : ""].join(" ")}>
+        <div
+          className={[
+            'battlefield__drop-hint',
+            activeDropSlot !== null ? 'battlefield__drop-hint--active' : '',
+          ].join(' ')}
+        >
           Solte a carta sobre uma zona vazia para escolher onde invocar
         </div>
       ) : null}
@@ -87,21 +100,27 @@ export function BattlefieldSection({
           const isGhost = !card && Boolean(ghost);
           const isSlotDroppable = isDropEnabled && !card;
           const isSlotDropActive = activeDropSlot === index;
-          const canShowControls = Boolean(card && onSelectAttack && onSelectAbility && viewerRole === "player" && viewerSeat === activeSeat);
+          const canShowControls = Boolean(
+            card &&
+            onSelectAttack &&
+            onSelectAbility &&
+            viewerRole === 'player' &&
+            viewerSeat === activeSeat,
+          );
 
           return (
             <div
               key={`slot-${title}-${index}`}
               className={[
-                "battlefield__slot",
-                isSlotDroppable ? "battlefield__slot--droppable" : "",
-                isSlotDropActive ? "battlefield__slot--drop-active" : "",
-              ].join(" ")}
+                'battlefield__slot',
+                isSlotDroppable ? 'battlefield__slot--droppable' : '',
+                isSlotDropActive ? 'battlefield__slot--drop-active' : '',
+              ].join(' ')}
               onDragOver={
                 isSlotDroppable
                   ? (event) => {
                       event.preventDefault();
-                      event.dataTransfer.dropEffect = "move";
+                      event.dataTransfer.dropEffect = 'move';
                       onSlotDragEnter?.(index);
                     }
                   : undefined
@@ -132,7 +151,10 @@ export function BattlefieldSection({
                     card={displayCard}
                     isSelectable={Boolean(card && (selectedAttacker || selectedAbilityCard))}
                     isSelected={Boolean(
-                      card && (selectedAttackerId === card.instance_id || selectedAbilityCardId === card.instance_id || selectedAbilityTargetIds.includes(card.instance_id)),
+                      card &&
+                      (selectedAttackerId === card.instance_id ||
+                        selectedAbilityCardId === card.instance_id ||
+                        selectedAbilityTargetIds.includes(card.instance_id)),
                     )}
                     isActionSource={Boolean(card && actionSourceId === card.instance_id)}
                     isActionTarget={Boolean(card && actionTargetId === card.instance_id)}
@@ -155,13 +177,14 @@ export function BattlefieldSection({
                   {canShowControls && card ? (
                     <div className="battlefield__interaction-bar">
                       <button
-                        disabled={!card.can_attack || card.position !== "attack"}
+                        disabled={!card.can_attack || card.position !== 'attack'}
                         onClick={(event) => {
                           event.stopPropagation();
                           onSelectAttack?.(card.instance_id);
                         }}
+                        title="Atacar"
                       >
-                        Atacar
+                        <Sword size={13} />
                       </button>
                       <button
                         disabled={!card.can_use_ability}
@@ -169,8 +192,13 @@ export function BattlefieldSection({
                           event.stopPropagation();
                           onSelectAbility?.(card);
                         }}
+                        title={`${card.ability_name} — custo ${card.ability_elixir_cost}`}
+                        className="battlefield__ability-btn"
                       >
-                        Hab. {card.ability_elixir_cost}
+                        <span className="battlefield__ability-btn-name">{card.ability_name}</span>
+                        <span className="battlefield__ability-btn-cost">
+                          {card.ability_elixir_cost}
+                        </span>
                       </button>
                       <button
                         disabled={!card.can_change_position}
@@ -178,13 +206,15 @@ export function BattlefieldSection({
                           event.stopPropagation();
                           onChangePosition?.(card);
                         }}
+                        title={`Posição: ${card.position === 'attack' ? 'ATK' : 'DEF'}`}
                       >
-                        Alterar posicao
+                        <ArrowLeftRight size={13} />
+                        <span>{card.position === 'attack' ? 'ATK' : 'DEF'}</span>
                       </button>
                     </div>
                   ) : null}
 
-                  {card && onPracticeRemoveEnemyCard && viewerRole === "player" ? (
+                  {card && onPracticeRemoveEnemyCard && viewerRole === 'player' ? (
                     <div className="battlefield__interaction-bar battlefield__interaction-bar--single">
                       <button
                         onClick={(event) => {
@@ -201,10 +231,10 @@ export function BattlefieldSection({
                 <button
                   type="button"
                   className={[
-                    "battlefield__slot-placeholder",
-                    isSlotDroppable ? "battlefield__slot-placeholder--droppable" : "",
-                    isSlotDropActive ? "battlefield__slot-placeholder--active" : "",
-                  ].join(" ")}
+                    'battlefield__slot-placeholder',
+                    isSlotDroppable ? 'battlefield__slot-placeholder--droppable' : '',
+                    isSlotDropActive ? 'battlefield__slot-placeholder--active' : '',
+                  ].join(' ')}
                   onClick={onEmptySlotClick ? () => onEmptySlotClick(index) : undefined}
                 >
                   <span>Zona {index + 1}</span>

@@ -1,6 +1,6 @@
 import { useState, type CSSProperties, type DragEventHandler } from 'react';
 
-type BattleCardVisual = {
+export type BattleCardVisual = {
   slug: string;
   name: string;
   title: string;
@@ -127,25 +127,16 @@ export function BattleCard({
               onError={() => setImageHidden(true)}
             />
           )}
-
-          {card.position ? (
-            <span
-              className={[
-                'battle-card__stance-badge',
-                card.position === 'attack'
-                  ? 'battle-card__stance-badge--attack'
-                  : 'battle-card__stance-badge--defense',
-              ].join(' ')}
-            >
-              {card.position === 'attack' ? 'ATK' : 'DEF'}
-            </span>
-          ) : null}
         </div>
 
         <div className="battle-card__side-stats">
           <div className="battle-card__side-stat">
             <span>HP</span>
-            <strong>{variant === 'field' ? `${healthValue}/\n${healthCap}` : `${healthCap}/\n${healthCap}`}</strong>
+            <strong>
+              {variant === 'field'
+                ? `${healthValue}/\n${healthCap}`
+                : `${healthCap}/\n${healthCap}`}
+            </strong>
           </div>
           <div className="battle-card__side-stat battle-card__side-stat--divider">
             <span>ATK</span>
@@ -168,7 +159,6 @@ export function BattleCard({
       </div>
 
       <div className="battle-card__divider" />
-
     </article>
   );
 }
