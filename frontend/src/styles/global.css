@@ -3057,6 +3057,7 @@ img {
   width: var(--battle-card-width);
   display: grid;
   gap: 8px;
+  justify-items: center;
 }
 
 .battlefield__interaction-bar {
@@ -3127,6 +3128,14 @@ img {
 .battlefield__slot-placeholder {
   width: var(--battle-card-width);
   min-height: 320px;
+}
+
+.battle-card--defense-position {
+  transform: rotate(270deg) scale(0.86);
+  transform-origin: center;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .practice-lab-card--modal .battle-card--hand {
@@ -3706,7 +3715,11 @@ img {
   border-radius: 28px;
   border: 1px solid rgba(255, 228, 184, 0.14);
   background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--card-secondary) 16%, transparent), transparent 22%),
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--card-secondary) 16%, transparent),
+      transparent 22%
+    ),
     linear-gradient(180deg, rgba(255, 248, 227, 0.05), rgba(10, 12, 16, 0.18)),
     rgba(12, 16, 22, 0.88);
   box-shadow:
@@ -3762,8 +3775,7 @@ img {
 .monster-showcase__section {
   border: 1px solid rgba(255, 234, 195, 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 248, 227, 0.04), rgba(8, 10, 14, 0.16)),
-    rgba(8, 11, 16, 0.58);
+    linear-gradient(180deg, rgba(255, 248, 227, 0.04), rgba(8, 10, 14, 0.16)), rgba(8, 11, 16, 0.58);
 }
 
 .monster-showcase__chips span {
@@ -3849,8 +3861,7 @@ img {
   border-radius: 18px;
   border: 1px solid rgba(255, 234, 195, 0.1);
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.04)),
-    rgba(8, 10, 14, 0.72);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.04)), rgba(8, 10, 14, 0.72);
 }
 
 .monster-showcase__stats span {
@@ -3946,8 +3957,7 @@ img {
   border-radius: 18px;
   border: 1px solid rgba(255, 234, 195, 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 248, 227, 0.04), rgba(8, 10, 14, 0.16)),
-    rgba(8, 11, 16, 0.58);
+    linear-gradient(180deg, rgba(255, 248, 227, 0.04), rgba(8, 10, 14, 0.16)), rgba(8, 11, 16, 0.58);
 }
 
 .monster-showcase__text-section {

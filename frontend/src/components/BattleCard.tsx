@@ -32,6 +32,7 @@ export type BattleCardVisual = {
 
 type BattleCardProps = {
   card: BattleCardVisual;
+  variant?: 'field' | 'reserve' | 'hand';
   isSelectable?: boolean;
   isSelected?: boolean;
   isActionSource?: boolean;
@@ -47,6 +48,7 @@ type BattleCardProps = {
 
 export function BattleCard({
   card,
+  variant = 'field',
   isSelectable = false,
   isSelected = false,
   isActionSource = false,
@@ -74,6 +76,9 @@ export function BattleCard({
     <article
       className={[
         'battle-card',
+        variant === 'hand' ? 'battle-card--hand' : '',
+        variant === 'reserve' ? 'battle-card--reserve' : '',
+        variant === 'field' && card.position === 'defense' ? 'battle-card--defense-position' : '',
         // não há mais variantes
         isSelectable ? 'battle-card--selectable' : '',
         isSelected ? 'battle-card--selected' : '',
@@ -123,9 +128,7 @@ export function BattleCard({
         <div className="battle-card__side-stats">
           <div className="battle-card__side-stat">
             <span>HP</span>
-            <strong>
-              `${healthValue}/\n${healthCap}`
-            </strong>
+            <strong>{`${healthValue}/\n${healthCap}`}</strong>
           </div>
           <div className="battle-card__side-stat battle-card__side-stat--divider">
             <span>ATK</span>
