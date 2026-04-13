@@ -81,16 +81,6 @@ export function BattlefieldSection({
       )}
     >
       <h3>{title}</h3>
-      {isDropEnabled ? (
-        <div
-          className={[
-            'battlefield__drop-hint',
-            activeDropSlot !== null ? 'battlefield__drop-hint--active' : '',
-          ].join(' ')}
-        >
-          Solte a carta sobre uma zona vazia para escolher onde invocar
-        </div>
-      ) : null}
       <div className="battlefield__grid">
         {slots.map((card, index) => {
           const ghost = ghosts[`slot-${index}`];

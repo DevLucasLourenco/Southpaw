@@ -140,6 +140,7 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   const [practiceModalOpen, setPracticeModalOpen] = useState(false);
   const [targetModal, setTargetModal] = useState<TargetModalState | null>(null);
   const [pulsingActionKey, setPulsingActionKey] = useState<string | null>(null);
+  const [isHandCollapsed, setIsHandCollapsed] = useState(false);
   const prevStateRef = useRef<BattleRoomState | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
@@ -570,7 +571,15 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
   const summoningCardId = roomState?.last_action?.summoned_card_id ?? null;
 
   return (
-    <section className="arena-page arena-page--expanded">
+    <>
+    <section
+      className={[
+        "arena-page",
+        "arena-page--expanded",
+        viewerRole === "player" ? "arena-page--with-hand-dock" : "",
+        viewerRole === "player" && isHandCollapsed ? "arena-page--with-hand-dock-collapsed" : "",
+      ].join(" ")}
+    >
       <div className="arena-topbar">
         <div>
           <p className="section-tag">Duelo online</p>
@@ -656,6 +665,15 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               isDamaged={Boolean(bottomPlayer?.seat && damagedSeats.has(bottomPlayer.seat))}
               isSpendingElixir={Boolean(bottomPlayer?.seat && spendingElixirSeat === bottomPlayer.seat)}
             />
+
+            {viewerRole === "player" && viewerSeat === activeSeat ? (
+              <div className="status-card status-card--turn-action">
+                <p className="section-tag">Controle de turno</p>
+                <button className="end-turn-button status-card__turn-button" onClick={() => sendAction({ type: "end_turn" })}>
+                  {isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
+                </button>
+              </div>
+            ) : null}
           </aside>
 
           <div
@@ -832,120 +850,6 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
               }}
             />
 
-            {pendingSummonMonster ? (
-              <section className="summon-chooser">
-                <div className="summon-chooser__copy">
-                  <p className="section-tag">Invocacao</p>
-                  <h3>{pendingSummonMonster.name}</h3>
-                  <p>
-                    {pendingSummonSlotIndex === null
-                      ? "Escolha uma zona vazia do seu campo para continuar."
-                      : `Escolha como essa carta entra na zona ${pendingSummonSlotIndex + 1}.`}
-                  </p>
-                </div>
-                <div className="summon-chooser__actions">
-                  <button className="end-turn-button" disabled={pendingSummonSlotIndex === null} onClick={() => confirmSummon("attack")}>
-                    Invocar em ATK
-                  </button>
-                  <button
-                    className="ghost-button summon-chooser__ghost"
-                    disabled={pendingSummonSlotIndex === null}
-                    onClick={() => confirmSummon("defense")}
-                  >
-                    Invocar em DEF
-                  </button>
-                  <button
-                    className="ghost-button summon-chooser__ghost"
-                    onClick={() => {
-                      setPendingSummonSlug(null);
-                      setPendingSummonSlotIndex(null);
-                      setActiveDropSlot(null);
-                    }}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </section>
-            ) : null}
-
-            {isPracticeMode && practiceSelectedMonster ? (
-              <section className="summon-chooser summon-chooser--practice">
-                <div className="summon-chooser__copy">
-                  <p className="section-tag">Treino contra robo</p>
-                  <h3>{practiceSelectedMonster.name}</h3>
-                  <p>
-                    {practiceTargetSlotIndex === null
-                      ? "Escolha uma zona vazia no campo inimigo para posicionar essa carta de teste."
-                      : `Posicione na zona ${practiceTargetSlotIndex + 1} do campo inimigo.`}
-                  </p>
-                </div>
-                <div className="summon-chooser__actions">
-                  <button
-                    className="end-turn-button"
-                    disabled={practiceTargetSlotIndex === null}
-                    onClick={() => confirmPracticeSpawn("attack")}
-                  >
-                    Inserir em ATK
-                  </button>
-                  <button
-                    className="ghost-button summon-chooser__ghost"
-                    disabled={practiceTargetSlotIndex === null}
-                    onClick={() => confirmPracticeSpawn("defense")}
-                  >
-                    Inserir em DEF
-                  </button>
-                  <button
-                    className="ghost-button summon-chooser__ghost"
-                    onClick={() => {
-                      setPracticeSelectedSlug(null);
-                      setPracticeTargetSlotIndex(null);
-                      setActiveDropSlot(null);
-                    }}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </section>
-            ) : null}
-
-            {viewerRole === "player" ? (
-              <div className="hand-command-bar">
-                <div className="hand-command-bar__hint">
-                  Arraste uma carta da mao para o seu campo ou clique nela para escolher o modo de invocacao.
-                </div>
-                <div className="hand-command-bar__actions">
-                  {isPracticeMode ? (
-                    <button className="ghost-button" onClick={() => setPracticeModalOpen(true)}>
-                      Abrir selecao do robo
-                    </button>
-                  ) : null}
-                  {viewerSeat === activeSeat ? (
-                    <button className="end-turn-button" onClick={() => sendAction({ type: "end_turn" })}>
-                      {isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
-                    </button>
-                  ) : null}
-                </div>
-              </div>
-            ) : null}
-
-            {viewerRole === "player" ? (
-              <BattleHandSection
-                title="Cartas na sua mao"
-                cards={handCards}
-                isActiveTurn={isMyTurn}
-                draggedSlug={draggedHandSlug}
-                onCardDragStart={(slug) => {
-                  setDraggedHandSlug(slug);
-                  setPendingSummonSlug(null);
-                  setPendingSummonSlotIndex(null);
-                }}
-                onCardDragEnd={() => {
-                  setDraggedHandSlug(null);
-                  setActiveDropSlot(null);
-                }}
-                onCardClick={(slug) => openSummonChooser(slug, null)}
-              />
-            ) : null}
           </div>
 
           <aside className="arena-sidebar arena-sidebar--right">
@@ -1142,6 +1046,149 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
         </div>
       ) : null}
     </section>
+
+    {roomState && viewerRole === "player" ? (
+      <div className={["arena-hand-dock", isHandCollapsed ? "arena-hand-dock--collapsed" : ""].join(" ")}>
+        <div className="arena-hand-dock__inner">
+          <div className="hand-command-bar">
+            <div className="hand-command-bar__left">
+              <button
+                className="ghost-button hand-command-bar__toggle"
+                onClick={() => setIsHandCollapsed((current) => !current)}
+              >
+                {isHandCollapsed ? "Expandir mao" : "Colapsar mao"}
+              </button>
+              <span className="hand-command-bar__count">{handCards.length} carta(s)</span>
+            </div>
+            <div className="hand-command-bar__actions">
+              {isPracticeMode ? (
+                <button className="ghost-button" onClick={() => setPracticeModalOpen(true)}>
+                    Abrir selecao do robo
+                  </button>
+                ) : null}
+              </div>
+            </div>
+
+          <BattleHandSection
+            cards={handCards}
+            collapsed={isHandCollapsed}
+            isActiveTurn={isMyTurn}
+            draggedSlug={draggedHandSlug}
+            onCardDragStart={(slug) => {
+              setDraggedHandSlug(slug);
+              setPendingSummonSlug(null);
+              setPendingSummonSlotIndex(null);
+            }}
+            onCardDragEnd={() => {
+              setDraggedHandSlug(null);
+              setActiveDropSlot(null);
+            }}
+            onCardClick={(slug) => openSummonChooser(slug, null)}
+          />
+        </div>
+      </div>
+    ) : null}
+
+      {pendingSummonMonster ? (
+        <div
+          className="summon-modal-backdrop"
+          onClick={() => {
+            setPendingSummonSlug(null);
+            setPendingSummonSlotIndex(null);
+            setActiveDropSlot(null);
+          }}
+        >
+          <section className="summon-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="summon-modal__header">
+              <div>
+                <p className="section-tag">Invocacao</p>
+                <h3>{pendingSummonMonster.name}</h3>
+                <p>
+                  {pendingSummonSlotIndex === null
+                    ? "Escolha uma zona vazia do seu campo para continuar."
+                    : `Escolha como essa carta entra na zona ${pendingSummonSlotIndex + 1}.`}
+                </p>
+              </div>
+              <button
+                className="ghost-button"
+                onClick={() => {
+                  setPendingSummonSlug(null);
+                  setPendingSummonSlotIndex(null);
+                  setActiveDropSlot(null);
+                }}
+              >
+                Fechar
+              </button>
+            </div>
+
+            <div className="summon-modal__actions">
+              <button className="end-turn-button" disabled={pendingSummonSlotIndex === null} onClick={() => confirmSummon("attack")}>
+                Invocar em ATK
+              </button>
+              <button
+                className="ghost-button summon-modal__ghost"
+                disabled={pendingSummonSlotIndex === null}
+                onClick={() => confirmSummon("defense")}
+              >
+                Invocar em DEF
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {isPracticeMode && practiceSelectedMonster ? (
+        <div
+          className="summon-modal-backdrop"
+          onClick={() => {
+            setPracticeSelectedSlug(null);
+            setPracticeTargetSlotIndex(null);
+            setActiveDropSlot(null);
+          }}
+        >
+          <section className="summon-modal summon-modal--practice" onClick={(event) => event.stopPropagation()}>
+            <div className="summon-modal__header">
+              <div>
+                <p className="section-tag">Treino contra robo</p>
+                <h3>{practiceSelectedMonster.name}</h3>
+                <p>
+                  {practiceTargetSlotIndex === null
+                    ? "Escolha uma zona vazia no campo inimigo para posicionar essa carta de teste."
+                    : `Posicione na zona ${practiceTargetSlotIndex + 1} do campo inimigo.`}
+                </p>
+              </div>
+              <button
+                className="ghost-button"
+                onClick={() => {
+                  setPracticeSelectedSlug(null);
+                  setPracticeTargetSlotIndex(null);
+                  setActiveDropSlot(null);
+                }}
+              >
+                Fechar
+              </button>
+            </div>
+
+            <div className="summon-modal__actions">
+              <button
+                className="end-turn-button"
+                disabled={practiceTargetSlotIndex === null}
+                onClick={() => confirmPracticeSpawn("attack")}
+              >
+                Inserir em ATK
+              </button>
+              <button
+                className="ghost-button summon-modal__ghost"
+                disabled={practiceTargetSlotIndex === null}
+                onClick={() => confirmPracticeSpawn("defense")}
+              >
+                Inserir em DEF
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+    </>
   );
 }
 
