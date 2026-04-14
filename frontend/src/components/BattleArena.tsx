@@ -669,8 +669,13 @@ export function BattleArena({ roomId, onLeaveRoom }: BattleArenaProps) {
             {viewerRole === "player" && viewerSeat === activeSeat ? (
               <div className="status-card status-card--turn-action">
                 <p className="section-tag">Controle de turno</p>
-                <button className="end-turn-button status-card__turn-button" onClick={() => sendAction({ type: "end_turn" })}>
-                  {isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
+                <button
+                  className="end-turn-button status-card__turn-button"
+                  onClick={() => sendAction({ type: "end_turn" })}
+                  title={isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
+                  aria-label={isPracticeMode ? "Avancar turno de treino" : "Encerrar turno"}
+                >
+                  {isPracticeMode ? "→" : "→"}
                 </button>
               </div>
             ) : null}
